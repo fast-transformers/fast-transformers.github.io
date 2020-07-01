@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
+<title>fast_transformers.sparse_product API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>fast_transformers.sparse_product</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
+# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+#
+
+
+import torch
+
+from .sparse_product_cpu import \
+    sparse_dot_product as sparse_dot_product_cpu, \
+    sparse_dot_backward as sparse_dot_backward_cpu, \
+    sparse_weighted_average as sparse_weighted_average_cpu, \
+    sparse_weighted_average_backward as sparse_weighted_average_backward_cpu
+try:
+    from .sparse_product_cuda import \
+        sparse_dot_product as sparse_dot_product_cuda, \
+        sparse_dot_backward as sparse_dot_backward_cuda, \
+        sparse_weighted_average as sparse_weighted_average_cuda, \
+        sparse_weighted_average_backward as \
+            sparse_weighted_average_backward_cuda
+except ImportError:
+    sparse_dot_product_cuda = None
+    sparse_dot_backward_cuda = None
+    sparse_weighted_average_cuda = None
+    sparse_weighted_average_backward_cuda = None
+
+from .clustered_sparse_product_cpu import \
+    clustered_sparse_dot_product as clustered_sparse_dot_product_cpu, \
+    clustered_sparse_dot_backward as clustered_sparse_dot_backward_cpu, \
+    clustered_sparse_weighted_average as \
+        clustered_sparse_weighted_average_cpu, \
+    clustered_sparse_weighted_average_backward as \
+        clustered_sparse_weighted_average_backward_cpu
+
+try:
+    from .clustered_sparse_product_cuda import \
+        clustered_sparse_dot_product as clustered_sparse_dot_product_cuda, \
+        clustered_sparse_dot_backward as clustered_sparse_dot_backward_cuda, \
+        clustered_sparse_weighted_average as \
+            clustered_sparse_weighted_average_cuda, \
+        clustered_sparse_weighted_average_backward as \
+            clustered_sparse_weighted_average_backward_cuda
+except ImportError:
+    clustered_sparse_dot_product_cuda = None
+    clustered_sparse_dot_backward_cuda = None
+    clustered_sparse_weighted_average_cuda = None
+    clustered_sparse_weighted_average_backward_cuda = None
+
+
+class SparseDotProduct(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the dot products only at the positions specified by topk.&#34;&#34;&#34;
+    dot = {
+        &#34;cpu&#34;: sparse_dot_product_cpu,
+        &#34;cuda&#34;: sparse_dot_product_cuda
+    }
+    dot_backward = {
+        &#34;cpu&#34;: sparse_dot_backward_cpu,
+        &#34;cuda&#34;: sparse_dot_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, Q, K, topk):
+        # Save the inputs to compute the gradient
+        ctx.save_for_backward(Q, K, topk)
+
+        # Create the output tensor
+        device = Q.device
+        N, H, L, E = Q.shape
+        _, _, _, k = topk.shape
+        product = torch.empty((N, H, L, k), device=device)
+
+        # Actually perform the dot product
+        SparseDotProduct.dot[device.type](Q, K, topk, product)
+
+        return product
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        Q, K, topk = ctx.saved_tensors
+        grad_Q = torch.zeros_like(Q)
+        grad_K = torch.zeros_like(K)
+
+        SparseDotProduct.dot_backward[Q.device.type](
+            Q,
+            K,
+            topk,
+            grad_output,
+            grad_Q,
+            grad_K
+        )
+
+        return grad_Q, grad_K, None
+
+
+class SparseWeightedAverage(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the weighted average only for the topk values.&#34;&#34;&#34;
+    avg = {
+        &#34;cpu&#34;: sparse_weighted_average_cpu,
+        &#34;cuda&#34;: sparse_weighted_average_cuda
+    }
+    avg_backward = {
+        &#34;cpu&#34;: sparse_weighted_average_backward_cpu,
+        &#34;cuda&#34;: sparse_weighted_average_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, weights, values, topk):
+        # Save the tensors to compute the gradient
+        ctx.save_for_backward(weights, values, topk)
+
+        # Allocate the output tensor
+        N, H, L, _ = weights.shape
+        _, _, _, E = values.shape
+        output = values.new_zeros(N, H, L, E)
+
+        # Compute the average
+        SparseWeightedAverage.avg[weights.device.type](
+            weights,
+            values,
+            topk,
+            output
+        )
+
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        weights, values, topk = ctx.saved_tensors
+        grad_weights = torch.zeros_like(weights)
+        grad_values = torch.zeros_like(values)
+
+        if grad_output.stride()[-1] != 1:
+            grad_output = grad_output.contiguous()
+
+        SparseWeightedAverage.avg_backward[weights.device.type](
+            weights,
+            values,
+            topk,
+            grad_output,
+            grad_weights,
+            grad_values
+        )
+
+        return grad_weights, grad_values, None
+
+
+class ClusteredSparseDotProduct(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the dot products only at the positions specified by topk.&#34;&#34;&#34;
+    dot = {
+        &#34;cpu&#34;: clustered_sparse_dot_product_cpu,
+        &#34;cuda&#34;: clustered_sparse_dot_product_cuda
+    }
+    dot_backward = {
+        &#34;cpu&#34;: clustered_sparse_dot_backward_cpu,
+        &#34;cuda&#34;: clustered_sparse_dot_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, Q, K, topk, groups, counts, lengths):
+        # Save the inputs to compute the gradient
+        ctx.save_for_backward(Q, K, topk, groups)
+
+        device = Q.device
+        N, H, L, E = Q.shape
+        _, _, C, k = topk.shape
+
+        # Create the output tensor
+        product = torch.empty((N, H, L, k), device=device)
+
+        # Unfortunately the cpu and gpu interfaces are different so
+        # the entire call is surrounded by if-else block
+        if device.type == &#34;cpu&#34;:
+            ClusteredSparseDotProduct.dot[device.type](
+                Q,
+                K,
+                groups,
+                topk,
+                product
+            )
+
+        else:
+            queries_per_block = min(L, 1024//k) 
+            threads = k * queries_per_block
+            blocks = ((L*k)//threads) + C + 1
+            query_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * L 
+            blocks_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * -1 
+            _, sorted_group_indices = torch.sort(groups, descending=True, dim=-1)
+
+            # Actually perform the dot product
+            ClusteredSparseDotProduct.dot[device.type](
+                Q,
+                K,
+                topk,
+                lengths,
+                blocks_map,
+                query_map,
+                counts,
+                sorted_group_indices,
+                product
+            )
+        return product
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        Q, K, topk, groups = ctx.saved_tensors
+        grad_Q = torch.zeros_like(Q)
+        grad_K = torch.zeros_like(K)
+        ClusteredSparseDotProduct.dot_backward[Q.device.type](
+            Q,
+            K,
+            groups,
+            topk,
+            grad_output,
+            grad_Q,
+            grad_K
+        )
+
+        return grad_Q, grad_K, None, None, None, None
+
+class ClusteredSparseWeightedAverage(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the weighted average only for the topk values.&#34;&#34;&#34;
+    avg = {
+        &#34;cpu&#34;: clustered_sparse_weighted_average_cpu,
+        &#34;cuda&#34;: clustered_sparse_weighted_average_cuda
+    }
+    avg_backward = {
+        &#34;cpu&#34;: clustered_sparse_weighted_average_backward_cpu,
+        &#34;cuda&#34;: clustered_sparse_weighted_average_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, weights, values, topk, groups):
+        # Save the tensors to compute the gradient
+        ctx.save_for_backward(weights, values, topk, groups)
+
+        # Allocate the output tensor
+        N, H, L, _ = weights.shape
+        _, _, _, E = values.shape
+        output = values.new_zeros(N, H, L, E)
+        
+        # Compute the average
+        ClusteredSparseWeightedAverage.avg[weights.device.type](
+            weights,
+            values,
+            groups,
+            topk,
+            output
+        )
+
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        weights, values, topk, groups = ctx.saved_tensors
+        grad_weights = torch.zeros_like(weights)
+        grad_values = torch.zeros_like(values)
+
+        if grad_output.stride()[-1] != 1:
+            grad_output = grad_output.contiguous()
+
+        ClusteredSparseWeightedAverage.avg_backward[weights.device.type](
+            weights,
+            values,
+            groups,
+            topk,
+            grad_output,
+            grad_weights,
+            grad_values
+        )
+
+        return grad_weights, grad_values, None, None
+
+
+# Alias the autograd functions to python style snake case naming
+clustered_sparse_dot_product = ClusteredSparseDotProduct.apply
+clustered_sparse_weighted_average = ClusteredSparseWeightedAverage.apply
+
+# Alias the autograd functions to python style snake case naming
+sparse_dot_product = SparseDotProduct.apply
+sparse_weighted_average = SparseWeightedAverage.apply</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="fast_transformers.sparse_product.clustered_sparse_product_cpu" href="clustered_sparse_product_cpu.html">fast_transformers.sparse_product.clustered_sparse_product_cpu</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="fast_transformers.sparse_product.sparse_product_cpu" href="sparse_product_cpu.html">fast_transformers.sparse_product.sparse_product_cpu</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="fast_transformers.sparse_product.clustered_sparse_dot_product"><code class="name flex">
+<span>def <span class="ident">clustered_sparse_dot_product</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.clustered_sparse_weighted_average"><code class="name flex">
+<span>def <span class="ident">clustered_sparse_weighted_average</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.sparse_dot_product"><code class="name flex">
+<span>def <span class="ident">sparse_dot_product</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.sparse_weighted_average"><code class="name flex">
+<span>def <span class="ident">sparse_weighted_average</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.sparse_product.ClusteredSparseDotProduct"><code class="flex name class">
+<span>class <span class="ident">ClusteredSparseDotProduct</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the dot products only at the positions specified by topk.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClusteredSparseDotProduct(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the dot products only at the positions specified by topk.&#34;&#34;&#34;
+    dot = {
+        &#34;cpu&#34;: clustered_sparse_dot_product_cpu,
+        &#34;cuda&#34;: clustered_sparse_dot_product_cuda
+    }
+    dot_backward = {
+        &#34;cpu&#34;: clustered_sparse_dot_backward_cpu,
+        &#34;cuda&#34;: clustered_sparse_dot_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, Q, K, topk, groups, counts, lengths):
+        # Save the inputs to compute the gradient
+        ctx.save_for_backward(Q, K, topk, groups)
+
+        device = Q.device
+        N, H, L, E = Q.shape
+        _, _, C, k = topk.shape
+
+        # Create the output tensor
+        product = torch.empty((N, H, L, k), device=device)
+
+        # Unfortunately the cpu and gpu interfaces are different so
+        # the entire call is surrounded by if-else block
+        if device.type == &#34;cpu&#34;:
+            ClusteredSparseDotProduct.dot[device.type](
+                Q,
+                K,
+                groups,
+                topk,
+                product
+            )
+
+        else:
+            queries_per_block = min(L, 1024//k) 
+            threads = k * queries_per_block
+            blocks = ((L*k)//threads) + C + 1
+            query_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * L 
+            blocks_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * -1 
+            _, sorted_group_indices = torch.sort(groups, descending=True, dim=-1)
+
+            # Actually perform the dot product
+            ClusteredSparseDotProduct.dot[device.type](
+                Q,
+                K,
+                topk,
+                lengths,
+                blocks_map,
+                query_map,
+                counts,
+                sorted_group_indices,
+                product
+            )
+        return product
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        Q, K, topk, groups = ctx.saved_tensors
+        grad_Q = torch.zeros_like(Q)
+        grad_K = torch.zeros_like(K)
+        ClusteredSparseDotProduct.dot_backward[Q.device.type](
+            Q,
+            K,
+            groups,
+            topk,
+            grad_output,
+            grad_Q,
+            grad_K
+        )
+
+        return grad_Q, grad_K, None, None, None, None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.autograd.function.Function</li>
+<li>torch._C._FunctionBase</li>
+<li>torch.autograd.function._ContextMethodMixin</li>
+<li>torch.autograd.function._HookMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.ClusteredSparseDotProduct.dot"><code class="name">var <span class="ident">dot</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.ClusteredSparseDotProduct.dot_backward"><code class="name">var <span class="ident">dot_backward</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.ClusteredSparseDotProduct.backward"><code class="name flex">
+<span>def <span class="ident">backward</span></span>(<span>ctx, grad_output)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Defines a formula for differentiating the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context :attr:<code>ctx</code> as the first argument, followed by
+as many outputs did :func:<code>forward</code> return, and it should return as many
+tensors, as there were inputs to :func:<code>forward</code>. Each argument is the
+gradient w.r.t the given output, and each returned value should be the
+gradient w.r.t. the corresponding input.</p>
+<p>The context can be used to retrieve tensors saved during the forward
+pass. It also has an attribute :attr:<code>ctx.needs_input_grad</code> as a tuple
+of booleans representing whether each input needs gradient. E.g.,
+:func:<code>backward</code> will have <code>ctx.needs_input_grad[0] = True</code> if the
+first input to :func:<code>forward</code> needs gradient computated w.r.t. the
+output.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def backward(ctx, grad_output):
+    # Extract the saved tensors and allocate memory for the gradients
+    Q, K, topk, groups = ctx.saved_tensors
+    grad_Q = torch.zeros_like(Q)
+    grad_K = torch.zeros_like(K)
+    ClusteredSparseDotProduct.dot_backward[Q.device.type](
+        Q,
+        K,
+        groups,
+        topk,
+        grad_output,
+        grad_Q,
+        grad_K
+    )
+
+    return grad_Q, grad_K, None, None, None, None</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.sparse_product.ClusteredSparseDotProduct.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>ctx, Q, K, topk, groups, counts, lengths)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Performs the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</p>
+<p>The context can be used to store tensors that can be then retrieved
+during the backward pass.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def forward(ctx, Q, K, topk, groups, counts, lengths):
+    # Save the inputs to compute the gradient
+    ctx.save_for_backward(Q, K, topk, groups)
+
+    device = Q.device
+    N, H, L, E = Q.shape
+    _, _, C, k = topk.shape
+
+    # Create the output tensor
+    product = torch.empty((N, H, L, k), device=device)
+
+    # Unfortunately the cpu and gpu interfaces are different so
+    # the entire call is surrounded by if-else block
+    if device.type == &#34;cpu&#34;:
+        ClusteredSparseDotProduct.dot[device.type](
+            Q,
+            K,
+            groups,
+            topk,
+            product
+        )
+
+    else:
+        queries_per_block = min(L, 1024//k) 
+        threads = k * queries_per_block
+        blocks = ((L*k)//threads) + C + 1
+        query_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * L 
+        blocks_map = torch.ones((N, H, blocks), dtype=torch.int32).cuda() * -1 
+        _, sorted_group_indices = torch.sort(groups, descending=True, dim=-1)
+
+        # Actually perform the dot product
+        ClusteredSparseDotProduct.dot[device.type](
+            Q,
+            K,
+            topk,
+            lengths,
+            blocks_map,
+            query_map,
+            counts,
+            sorted_group_indices,
+            product
+        )
+    return product</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="fast_transformers.sparse_product.ClusteredSparseWeightedAverage"><code class="flex name class">
+<span>class <span class="ident">ClusteredSparseWeightedAverage</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the weighted average only for the topk values.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClusteredSparseWeightedAverage(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the weighted average only for the topk values.&#34;&#34;&#34;
+    avg = {
+        &#34;cpu&#34;: clustered_sparse_weighted_average_cpu,
+        &#34;cuda&#34;: clustered_sparse_weighted_average_cuda
+    }
+    avg_backward = {
+        &#34;cpu&#34;: clustered_sparse_weighted_average_backward_cpu,
+        &#34;cuda&#34;: clustered_sparse_weighted_average_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, weights, values, topk, groups):
+        # Save the tensors to compute the gradient
+        ctx.save_for_backward(weights, values, topk, groups)
+
+        # Allocate the output tensor
+        N, H, L, _ = weights.shape
+        _, _, _, E = values.shape
+        output = values.new_zeros(N, H, L, E)
+        
+        # Compute the average
+        ClusteredSparseWeightedAverage.avg[weights.device.type](
+            weights,
+            values,
+            groups,
+            topk,
+            output
+        )
+
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        weights, values, topk, groups = ctx.saved_tensors
+        grad_weights = torch.zeros_like(weights)
+        grad_values = torch.zeros_like(values)
+
+        if grad_output.stride()[-1] != 1:
+            grad_output = grad_output.contiguous()
+
+        ClusteredSparseWeightedAverage.avg_backward[weights.device.type](
+            weights,
+            values,
+            groups,
+            topk,
+            grad_output,
+            grad_weights,
+            grad_values
+        )
+
+        return grad_weights, grad_values, None, None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.autograd.function.Function</li>
+<li>torch._C._FunctionBase</li>
+<li>torch.autograd.function._ContextMethodMixin</li>
+<li>torch.autograd.function._HookMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg"><code class="name">var <span class="ident">avg</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg_backward"><code class="name">var <span class="ident">avg_backward</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.backward"><code class="name flex">
+<span>def <span class="ident">backward</span></span>(<span>ctx, grad_output)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Defines a formula for differentiating the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context :attr:<code>ctx</code> as the first argument, followed by
+as many outputs did :func:<code>forward</code> return, and it should return as many
+tensors, as there were inputs to :func:<code>forward</code>. Each argument is the
+gradient w.r.t the given output, and each returned value should be the
+gradient w.r.t. the corresponding input.</p>
+<p>The context can be used to retrieve tensors saved during the forward
+pass. It also has an attribute :attr:<code>ctx.needs_input_grad</code> as a tuple
+of booleans representing whether each input needs gradient. E.g.,
+:func:<code>backward</code> will have <code>ctx.needs_input_grad[0] = True</code> if the
+first input to :func:<code>forward</code> needs gradient computated w.r.t. the
+output.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def backward(ctx, grad_output):
+    # Extract the saved tensors and allocate memory for the gradients
+    weights, values, topk, groups = ctx.saved_tensors
+    grad_weights = torch.zeros_like(weights)
+    grad_values = torch.zeros_like(values)
+
+    if grad_output.stride()[-1] != 1:
+        grad_output = grad_output.contiguous()
+
+    ClusteredSparseWeightedAverage.avg_backward[weights.device.type](
+        weights,
+        values,
+        groups,
+        topk,
+        grad_output,
+        grad_weights,
+        grad_values
+    )
+
+    return grad_weights, grad_values, None, None</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>ctx, weights, values, topk, groups)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Performs the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</p>
+<p>The context can be used to store tensors that can be then retrieved
+during the backward pass.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def forward(ctx, weights, values, topk, groups):
+    # Save the tensors to compute the gradient
+    ctx.save_for_backward(weights, values, topk, groups)
+
+    # Allocate the output tensor
+    N, H, L, _ = weights.shape
+    _, _, _, E = values.shape
+    output = values.new_zeros(N, H, L, E)
+    
+    # Compute the average
+    ClusteredSparseWeightedAverage.avg[weights.device.type](
+        weights,
+        values,
+        groups,
+        topk,
+        output
+    )
+
+    return output</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseDotProduct"><code class="flex name class">
+<span>class <span class="ident">SparseDotProduct</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the dot products only at the positions specified by topk.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SparseDotProduct(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the dot products only at the positions specified by topk.&#34;&#34;&#34;
+    dot = {
+        &#34;cpu&#34;: sparse_dot_product_cpu,
+        &#34;cuda&#34;: sparse_dot_product_cuda
+    }
+    dot_backward = {
+        &#34;cpu&#34;: sparse_dot_backward_cpu,
+        &#34;cuda&#34;: sparse_dot_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, Q, K, topk):
+        # Save the inputs to compute the gradient
+        ctx.save_for_backward(Q, K, topk)
+
+        # Create the output tensor
+        device = Q.device
+        N, H, L, E = Q.shape
+        _, _, _, k = topk.shape
+        product = torch.empty((N, H, L, k), device=device)
+
+        # Actually perform the dot product
+        SparseDotProduct.dot[device.type](Q, K, topk, product)
+
+        return product
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        Q, K, topk = ctx.saved_tensors
+        grad_Q = torch.zeros_like(Q)
+        grad_K = torch.zeros_like(K)
+
+        SparseDotProduct.dot_backward[Q.device.type](
+            Q,
+            K,
+            topk,
+            grad_output,
+            grad_Q,
+            grad_K
+        )
+
+        return grad_Q, grad_K, None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.autograd.function.Function</li>
+<li>torch._C._FunctionBase</li>
+<li>torch.autograd.function._ContextMethodMixin</li>
+<li>torch.autograd.function._HookMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.SparseDotProduct.dot"><code class="name">var <span class="ident">dot</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseDotProduct.dot_backward"><code class="name">var <span class="ident">dot_backward</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.SparseDotProduct.backward"><code class="name flex">
+<span>def <span class="ident">backward</span></span>(<span>ctx, grad_output)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Defines a formula for differentiating the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context :attr:<code>ctx</code> as the first argument, followed by
+as many outputs did :func:<code>forward</code> return, and it should return as many
+tensors, as there were inputs to :func:<code>forward</code>. Each argument is the
+gradient w.r.t the given output, and each returned value should be the
+gradient w.r.t. the corresponding input.</p>
+<p>The context can be used to retrieve tensors saved during the forward
+pass. It also has an attribute :attr:<code>ctx.needs_input_grad</code> as a tuple
+of booleans representing whether each input needs gradient. E.g.,
+:func:<code>backward</code> will have <code>ctx.needs_input_grad[0] = True</code> if the
+first input to :func:<code>forward</code> needs gradient computated w.r.t. the
+output.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def backward(ctx, grad_output):
+    # Extract the saved tensors and allocate memory for the gradients
+    Q, K, topk = ctx.saved_tensors
+    grad_Q = torch.zeros_like(Q)
+    grad_K = torch.zeros_like(K)
+
+    SparseDotProduct.dot_backward[Q.device.type](
+        Q,
+        K,
+        topk,
+        grad_output,
+        grad_Q,
+        grad_K
+    )
+
+    return grad_Q, grad_K, None</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseDotProduct.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>ctx, Q, K, topk)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Performs the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</p>
+<p>The context can be used to store tensors that can be then retrieved
+during the backward pass.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def forward(ctx, Q, K, topk):
+    # Save the inputs to compute the gradient
+    ctx.save_for_backward(Q, K, topk)
+
+    # Create the output tensor
+    device = Q.device
+    N, H, L, E = Q.shape
+    _, _, _, k = topk.shape
+    product = torch.empty((N, H, L, k), device=device)
+
+    # Actually perform the dot product
+    SparseDotProduct.dot[device.type](Q, K, topk, product)
+
+    return product</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseWeightedAverage"><code class="flex name class">
+<span>class <span class="ident">SparseWeightedAverage</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the weighted average only for the topk values.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SparseWeightedAverage(torch.autograd.Function):
+    &#34;&#34;&#34;Compute the weighted average only for the topk values.&#34;&#34;&#34;
+    avg = {
+        &#34;cpu&#34;: sparse_weighted_average_cpu,
+        &#34;cuda&#34;: sparse_weighted_average_cuda
+    }
+    avg_backward = {
+        &#34;cpu&#34;: sparse_weighted_average_backward_cpu,
+        &#34;cuda&#34;: sparse_weighted_average_backward_cuda
+    }
+
+    @staticmethod
+    def forward(ctx, weights, values, topk):
+        # Save the tensors to compute the gradient
+        ctx.save_for_backward(weights, values, topk)
+
+        # Allocate the output tensor
+        N, H, L, _ = weights.shape
+        _, _, _, E = values.shape
+        output = values.new_zeros(N, H, L, E)
+
+        # Compute the average
+        SparseWeightedAverage.avg[weights.device.type](
+            weights,
+            values,
+            topk,
+            output
+        )
+
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        # Extract the saved tensors and allocate memory for the gradients
+        weights, values, topk = ctx.saved_tensors
+        grad_weights = torch.zeros_like(weights)
+        grad_values = torch.zeros_like(values)
+
+        if grad_output.stride()[-1] != 1:
+            grad_output = grad_output.contiguous()
+
+        SparseWeightedAverage.avg_backward[weights.device.type](
+            weights,
+            values,
+            topk,
+            grad_output,
+            grad_weights,
+            grad_values
+        )
+
+        return grad_weights, grad_values, None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.autograd.function.Function</li>
+<li>torch._C._FunctionBase</li>
+<li>torch.autograd.function._ContextMethodMixin</li>
+<li>torch.autograd.function._HookMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.SparseWeightedAverage.avg"><code class="name">var <span class="ident">avg</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseWeightedAverage.avg_backward"><code class="name">var <span class="ident">avg_backward</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="fast_transformers.sparse_product.SparseWeightedAverage.backward"><code class="name flex">
+<span>def <span class="ident">backward</span></span>(<span>ctx, grad_output)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Defines a formula for differentiating the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context :attr:<code>ctx</code> as the first argument, followed by
+as many outputs did :func:<code>forward</code> return, and it should return as many
+tensors, as there were inputs to :func:<code>forward</code>. Each argument is the
+gradient w.r.t the given output, and each returned value should be the
+gradient w.r.t. the corresponding input.</p>
+<p>The context can be used to retrieve tensors saved during the forward
+pass. It also has an attribute :attr:<code>ctx.needs_input_grad</code> as a tuple
+of booleans representing whether each input needs gradient. E.g.,
+:func:<code>backward</code> will have <code>ctx.needs_input_grad[0] = True</code> if the
+first input to :func:<code>forward</code> needs gradient computated w.r.t. the
+output.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def backward(ctx, grad_output):
+    # Extract the saved tensors and allocate memory for the gradients
+    weights, values, topk = ctx.saved_tensors
+    grad_weights = torch.zeros_like(weights)
+    grad_values = torch.zeros_like(values)
+
+    if grad_output.stride()[-1] != 1:
+        grad_output = grad_output.contiguous()
+
+    SparseWeightedAverage.avg_backward[weights.device.type](
+        weights,
+        values,
+        topk,
+        grad_output,
+        grad_weights,
+        grad_values
+    )
+
+    return grad_weights, grad_values, None</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.sparse_product.SparseWeightedAverage.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>ctx, weights, values, topk)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Performs the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</p>
+<p>The context can be used to store tensors that can be then retrieved
+during the backward pass.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def forward(ctx, weights, values, topk):
+    # Save the tensors to compute the gradient
+    ctx.save_for_backward(weights, values, topk)
+
+    # Allocate the output tensor
+    N, H, L, _ = weights.shape
+    _, _, _, E = values.shape
+    output = values.new_zeros(N, H, L, E)
+
+    # Compute the average
+    SparseWeightedAverage.avg[weights.device.type](
+        weights,
+        values,
+        topk,
+        output
+    )
+
+    return output</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers" href="../index.html">fast_transformers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="fast_transformers.sparse_product.clustered_sparse_product_cpu" href="clustered_sparse_product_cpu.html">fast_transformers.sparse_product.clustered_sparse_product_cpu</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.sparse_product_cpu" href="sparse_product_cpu.html">fast_transformers.sparse_product.sparse_product_cpu</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="fast_transformers.sparse_product.clustered_sparse_dot_product" href="#fast_transformers.sparse_product.clustered_sparse_dot_product">clustered_sparse_dot_product</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.clustered_sparse_weighted_average" href="#fast_transformers.sparse_product.clustered_sparse_weighted_average">clustered_sparse_weighted_average</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.sparse_dot_product" href="#fast_transformers.sparse_product.sparse_dot_product">sparse_dot_product</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.sparse_weighted_average" href="#fast_transformers.sparse_product.sparse_weighted_average">sparse_weighted_average</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.sparse_product.ClusteredSparseDotProduct" href="#fast_transformers.sparse_product.ClusteredSparseDotProduct">ClusteredSparseDotProduct</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseDotProduct.backward" href="#fast_transformers.sparse_product.ClusteredSparseDotProduct.backward">backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseDotProduct.dot" href="#fast_transformers.sparse_product.ClusteredSparseDotProduct.dot">dot</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseDotProduct.dot_backward" href="#fast_transformers.sparse_product.ClusteredSparseDotProduct.dot_backward">dot_backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseDotProduct.forward" href="#fast_transformers.sparse_product.ClusteredSparseDotProduct.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.sparse_product.ClusteredSparseWeightedAverage" href="#fast_transformers.sparse_product.ClusteredSparseWeightedAverage">ClusteredSparseWeightedAverage</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg" href="#fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg">avg</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg_backward" href="#fast_transformers.sparse_product.ClusteredSparseWeightedAverage.avg_backward">avg_backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.backward" href="#fast_transformers.sparse_product.ClusteredSparseWeightedAverage.backward">backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.ClusteredSparseWeightedAverage.forward" href="#fast_transformers.sparse_product.ClusteredSparseWeightedAverage.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.sparse_product.SparseDotProduct" href="#fast_transformers.sparse_product.SparseDotProduct">SparseDotProduct</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.sparse_product.SparseDotProduct.backward" href="#fast_transformers.sparse_product.SparseDotProduct.backward">backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseDotProduct.dot" href="#fast_transformers.sparse_product.SparseDotProduct.dot">dot</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseDotProduct.dot_backward" href="#fast_transformers.sparse_product.SparseDotProduct.dot_backward">dot_backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseDotProduct.forward" href="#fast_transformers.sparse_product.SparseDotProduct.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.sparse_product.SparseWeightedAverage" href="#fast_transformers.sparse_product.SparseWeightedAverage">SparseWeightedAverage</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.sparse_product.SparseWeightedAverage.avg" href="#fast_transformers.sparse_product.SparseWeightedAverage.avg">avg</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseWeightedAverage.avg_backward" href="#fast_transformers.sparse_product.SparseWeightedAverage.avg_backward">avg_backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseWeightedAverage.backward" href="#fast_transformers.sparse_product.SparseWeightedAverage.backward">backward</a></code></li>
+<li><code><a title="fast_transformers.sparse_product.SparseWeightedAverage.forward" href="#fast_transformers.sparse_product.SparseWeightedAverage.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.6.dev1+g65b31fd</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

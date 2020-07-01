@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
+<title>fast_transformers.attention.improved_clustered_attention API documentation</title>
+<meta name="description" content="Implement improved clustered self attention." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>fast_transformers.attention.improved_clustered_attention</code></h1>
+</header>
+<section id="section-intro">
+<p>Implement improved clustered self attention.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
+# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+#
+
+&#34;&#34;&#34;Implement improved clustered self attention.&#34;&#34;&#34;
+
+from math import sqrt
+
+import torch
+import torch.autograd
+from torch.nn import Dropout, Module
+from torch.nn.init import normal_
+
+from ..masking import FullMask
+from ..aggregate import aggregate, broadcast
+from ..clustering.hamming import cluster
+from ..hashing import compute_hashes
+from ..sparse_product import sparse_dot_product, sparse_weighted_average
+from ..sparse_product import clustered_sparse_dot_product, \
+    clustered_sparse_weighted_average
+
+
+class _GroupQueries(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, Q, clusters, counts):
+        factors = 1/counts.float()
+        q_grouped = aggregate(Q, clusters, factors)
+        ctx.save_for_backward(clusters, factors)
+
+        return q_grouped
+
+    @staticmethod
+    def backward(ctx, grad_q_grouped):
+        clusters, factors = ctx.saved_tensors
+        grad_q = broadcast(grad_q_grouped, clusters, factors)
+
+        return grad_q, None, None
+
+
+class _BroadcastValues(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, v_grouped, clusters, counts):
+        factors = torch.ones_like(counts, dtype=v_grouped.dtype)
+        V = broadcast(v_grouped, clusters, factors)
+        ctx.save_for_backward(clusters, factors)
+
+        return V
+
+    @staticmethod
+    def backward(ctx, grad_v):
+        clusters, factors = ctx.saved_tensors
+        grad_v_grouped = aggregate(grad_v, clusters, factors)
+
+        return grad_v_grouped, None, None
+
+
+class ImprovedClusteredAttention(Module):
+    &#34;&#34;&#34;
+    Immproved clustered attention approximation by recompution attention
+    for each query with the top-k keys for the corresponding cluster.
+
+    Given the queries, keys, and values as Q, K, and V respectively, we
+    first cluster the queries in &#34;C&#34; groups and compute the &#34;C&#34; query centroids
+    Q_c.
+
+    We now use to the centroids Q_c to identify the top-k keys with highest
+    dot products.
+    
+    Subsequently, for each query we compute the sparse dot product with
+    the corresponding top-k keys to improve the attention approximation.
+
+    Arguments
+    ---------
+        clusters: How many clusters to group the queries into
+        iterations: The number of lloyd iterations to perform (default: 10)
+        bits: How many bits to use for the hash (default: 32)
+        hash_bias: If true, hamming distance proportional to L2 distance
+                   If false, hamming distance proportional to cosine distance
+                   (default: True)
+        topk: Number of top-k keys to for improved approximation (default: 32)
+        softmax_temp: The temperature to use for the softmax attention.
+                      (default: 1/sqrt(d_keys) where d_keys is computed at
+                      runtime)
+        dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+    &#34;&#34;&#34;
+    def __init__(self, clusters, iterations=10, bits=32,
+                 hash_bias=True, topk=32, softmax_temp=None, dropout_rate=0.1):
+        super(ImprovedClusteredAttention, self).__init__()
+        self.clusters = clusters
+        self.iterations = iterations
+        self.bits = bits
+        self.hash_bias = hash_bias
+        self.topk = topk
+        self.softmax_temp = softmax_temp
+        self.dropout = Dropout(dropout_rate)
+
+    def _create_query_groups(self, Q, query_lengths):
+        N, H, L, E = Q.shape
+
+        # Compute the hashes for all the queries
+        planes = Q.new_empty((self.bits, E+1))
+        normal_(planes)
+        if not self.hash_bias:
+            planes[:, -1] = 0
+        hashes = compute_hashes(Q.view(N*H*L, E), planes).view(N, H, L)
+
+        # Cluster the hashes and return the cluster index per query
+        clusters, counts =  cluster(
+            hashes,
+            query_lengths._lengths.int(),
+            clusters=self.clusters,
+            iterations=self.iterations,
+            bits=self.bits
+        )
+        return clusters, counts
+
+    def _topk_attention(self, Q, K, V,
+                        clusters, counts,
+                        topk, topk_values,
+                        A_bottomk, softmax_temp,
+                        query_lengths):
+        &#34;&#34;&#34;Return the attention with just the topk heads.&#34;&#34;&#34;
+        # Extract some indices
+        N, H, L, E = Q.shape
+        _, _, S, _ = K.shape
+        _, _, C, k = topk.shape
+
+        # We need to pass the output tensor to initialize to 0
+        QK = clustered_sparse_dot_product(
+            Q, K, topk,
+            clusters, counts,
+            query_lengths._lengths.int()
+        )
+        # We need to mask the topk dot products if topk &gt; input_length
+        QK = QK.masked_fill(
+            torch.isinf(topk_values[:,0,0,:]).view(N, 1, 1, k),
+            float(&#34;-inf&#34;)
+        )
+        A = torch.softmax(softmax_temp * QK, dim=-1)
+        assert A_bottomk.is_contiguous()
+        A_bottomk = broadcast(
+            A_bottomk.unsqueeze(3),
+            clusters,
+            torch.ones_like(counts, dtype=torch.float32)
+        )
+        A = A * (1.0 - A_bottomk)
+        A = self.dropout(A)
+        assert A.is_contiguous()
+        V_new = clustered_sparse_weighted_average(A, V, topk, clusters)
+
+        return V_new
+
+    def _broadcast_values(self, V, clusters, counts):
+        &#34;&#34;&#34;Broadcast the values back to the correct positions but make sure
+        that the gradient flows properly.&#34;&#34;&#34;
+        V_new = _BroadcastValues.apply(V.contiguous(), clusters, counts)
+        return V_new
+
+    def _bottomk_attention(self, QK, V, clusters, counts, topk, softmax_temp): 
+        &#34;&#34;&#34;Return the attention with just the bottomk keys.&#34;&#34;&#34;
+        N, H, C, S = QK.shape
+
+        A = torch.softmax(softmax_temp * QK, dim=-1)
+        mask = QK.new_ones(QK.shape)
+        mask[
+            torch.arange(N, device=QK.device).view(N, 1, 1, 1),
+            torch.arange(H, device=QK.device).view(1, H, 1, 1),
+            torch.arange(C, device=QK.device).view(1, 1, C, 1),
+            topk,
+        ] = 0
+        A = A * mask
+        A_bottomk = A.sum(-1)
+        A = self.dropout(A)
+        # Compute the values
+        V_new = torch.einsum(&#34;nhls,nhse-&gt;nhle&#34;, A, V)
+        # Broadcast the values back depending on the groups
+        V_new = self._broadcast_values(V_new, clusters, counts)
+        
+        return V_new, A_bottomk
+
+    def forward(self, queries, keys, values, attn_mask, query_lengths,
+                key_lengths):
+        # Make sure that there is no attention mask
+        assert attn_mask.all_ones, (&#34;Improved-clustered attention cannot &#34;
+                                    &#34;use an arbitrary attention mask.&#34;)
+
+        queries = queries.permute(0,2,1,3).contiguous()
+        keys = keys.permute(0,2,1,3).contiguous()
+        values = values.permute(0,2,1,3).contiguous()
+        N, H, L, E = queries.shape
+        softmax_temp = self.softmax_temp or 1./sqrt(E)
+        
+        # Cluster the queries into groups
+        clusters, counts = self._create_query_groups(queries, query_lengths)
+        Q_grouped = _GroupQueries.apply(queries, clusters, counts)
+        # Compute the attention
+        QK = torch.einsum(&#34;nhle,nhse-&gt;nhls&#34;, Q_grouped, keys)
+        QK = QK + key_lengths.additive_matrix[:, None, None, :]
+        topk_values, topk = torch.topk(QK, self.topk, sorted=False, dim=-1)
+        assert topk.is_contiguous()
+
+        # Now compute the attention with only the bottom keys
+        V_bottomk, A_bottomk = self._bottomk_attention(
+            QK, values,
+            clusters, counts,
+            topk,
+            softmax_temp
+        )
+
+        # Now compute the attention with only the top keys
+        V_topk = self._topk_attention(
+            queries, keys, values,
+            clusters, counts,
+            topk, topk_values,
+            A_bottomk,
+            softmax_temp,
+            query_lengths
+        )
+        V_new = V_topk + V_bottomk
+
+        return V_new.permute(0, 2, 1, 3).contiguous()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="fast_transformers.attention.improved_clustered_attention.clustered_sparse_dot_product"><code class="name flex">
+<span>def <span class="ident">clustered_sparse_dot_product</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.attention.improved_clustered_attention.clustered_sparse_weighted_average"><code class="name flex">
+<span>def <span class="ident">clustered_sparse_weighted_average</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.attention.improved_clustered_attention.sparse_dot_product"><code class="name flex">
+<span>def <span class="ident">sparse_dot_product</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="fast_transformers.attention.improved_clustered_attention.sparse_weighted_average"><code class="name flex">
+<span>def <span class="ident">sparse_weighted_average</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention"><code class="flex name class">
+<span>class <span class="ident">ImprovedClusteredAttention</span></span>
+<span>(</span><span>clusters, iterations=10, bits=32, hash_bias=True, topk=32, softmax_temp=None, dropout_rate=0.1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Immproved clustered attention approximation by recompution attention
+for each query with the top-k keys for the corresponding cluster.</p>
+<p>Given the queries, keys, and values as Q, K, and V respectively, we
+first cluster the queries in "C" groups and compute the "C" query centroids
+Q_c.</p>
+<p>We now use to the centroids Q_c to identify the top-k keys with highest
+dot products.</p>
+<p>Subsequently, for each query we compute the sparse dot product with
+the corresponding top-k keys to improve the attention approximation.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>clusters: How many clusters to group the queries into
+iterations: The number of lloyd iterations to perform (default: 10)
+bits: How many bits to use for the hash (default: 32)
+hash_bias: If true, hamming distance proportional to L2 distance
+           If false, hamming distance proportional to cosine distance
+           (default: True)
+topk: Number of top-k keys to for improved approximation (default: 32)
+softmax_temp: The temperature to use for the softmax attention.
+              (default: 1/sqrt(d_keys) where d_keys is computed at
+              runtime)
+dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+</code></pre>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ImprovedClusteredAttention(Module):
+    &#34;&#34;&#34;
+    Immproved clustered attention approximation by recompution attention
+    for each query with the top-k keys for the corresponding cluster.
+
+    Given the queries, keys, and values as Q, K, and V respectively, we
+    first cluster the queries in &#34;C&#34; groups and compute the &#34;C&#34; query centroids
+    Q_c.
+
+    We now use to the centroids Q_c to identify the top-k keys with highest
+    dot products.
+    
+    Subsequently, for each query we compute the sparse dot product with
+    the corresponding top-k keys to improve the attention approximation.
+
+    Arguments
+    ---------
+        clusters: How many clusters to group the queries into
+        iterations: The number of lloyd iterations to perform (default: 10)
+        bits: How many bits to use for the hash (default: 32)
+        hash_bias: If true, hamming distance proportional to L2 distance
+                   If false, hamming distance proportional to cosine distance
+                   (default: True)
+        topk: Number of top-k keys to for improved approximation (default: 32)
+        softmax_temp: The temperature to use for the softmax attention.
+                      (default: 1/sqrt(d_keys) where d_keys is computed at
+                      runtime)
+        dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+    &#34;&#34;&#34;
+    def __init__(self, clusters, iterations=10, bits=32,
+                 hash_bias=True, topk=32, softmax_temp=None, dropout_rate=0.1):
+        super(ImprovedClusteredAttention, self).__init__()
+        self.clusters = clusters
+        self.iterations = iterations
+        self.bits = bits
+        self.hash_bias = hash_bias
+        self.topk = topk
+        self.softmax_temp = softmax_temp
+        self.dropout = Dropout(dropout_rate)
+
+    def _create_query_groups(self, Q, query_lengths):
+        N, H, L, E = Q.shape
+
+        # Compute the hashes for all the queries
+        planes = Q.new_empty((self.bits, E+1))
+        normal_(planes)
+        if not self.hash_bias:
+            planes[:, -1] = 0
+        hashes = compute_hashes(Q.view(N*H*L, E), planes).view(N, H, L)
+
+        # Cluster the hashes and return the cluster index per query
+        clusters, counts =  cluster(
+            hashes,
+            query_lengths._lengths.int(),
+            clusters=self.clusters,
+            iterations=self.iterations,
+            bits=self.bits
+        )
+        return clusters, counts
+
+    def _topk_attention(self, Q, K, V,
+                        clusters, counts,
+                        topk, topk_values,
+                        A_bottomk, softmax_temp,
+                        query_lengths):
+        &#34;&#34;&#34;Return the attention with just the topk heads.&#34;&#34;&#34;
+        # Extract some indices
+        N, H, L, E = Q.shape
+        _, _, S, _ = K.shape
+        _, _, C, k = topk.shape
+
+        # We need to pass the output tensor to initialize to 0
+        QK = clustered_sparse_dot_product(
+            Q, K, topk,
+            clusters, counts,
+            query_lengths._lengths.int()
+        )
+        # We need to mask the topk dot products if topk &gt; input_length
+        QK = QK.masked_fill(
+            torch.isinf(topk_values[:,0,0,:]).view(N, 1, 1, k),
+            float(&#34;-inf&#34;)
+        )
+        A = torch.softmax(softmax_temp * QK, dim=-1)
+        assert A_bottomk.is_contiguous()
+        A_bottomk = broadcast(
+            A_bottomk.unsqueeze(3),
+            clusters,
+            torch.ones_like(counts, dtype=torch.float32)
+        )
+        A = A * (1.0 - A_bottomk)
+        A = self.dropout(A)
+        assert A.is_contiguous()
+        V_new = clustered_sparse_weighted_average(A, V, topk, clusters)
+
+        return V_new
+
+    def _broadcast_values(self, V, clusters, counts):
+        &#34;&#34;&#34;Broadcast the values back to the correct positions but make sure
+        that the gradient flows properly.&#34;&#34;&#34;
+        V_new = _BroadcastValues.apply(V.contiguous(), clusters, counts)
+        return V_new
+
+    def _bottomk_attention(self, QK, V, clusters, counts, topk, softmax_temp): 
+        &#34;&#34;&#34;Return the attention with just the bottomk keys.&#34;&#34;&#34;
+        N, H, C, S = QK.shape
+
+        A = torch.softmax(softmax_temp * QK, dim=-1)
+        mask = QK.new_ones(QK.shape)
+        mask[
+            torch.arange(N, device=QK.device).view(N, 1, 1, 1),
+            torch.arange(H, device=QK.device).view(1, H, 1, 1),
+            torch.arange(C, device=QK.device).view(1, 1, C, 1),
+            topk,
+        ] = 0
+        A = A * mask
+        A_bottomk = A.sum(-1)
+        A = self.dropout(A)
+        # Compute the values
+        V_new = torch.einsum(&#34;nhls,nhse-&gt;nhle&#34;, A, V)
+        # Broadcast the values back depending on the groups
+        V_new = self._broadcast_values(V_new, clusters, counts)
+        
+        return V_new, A_bottomk
+
+    def forward(self, queries, keys, values, attn_mask, query_lengths,
+                key_lengths):
+        # Make sure that there is no attention mask
+        assert attn_mask.all_ones, (&#34;Improved-clustered attention cannot &#34;
+                                    &#34;use an arbitrary attention mask.&#34;)
+
+        queries = queries.permute(0,2,1,3).contiguous()
+        keys = keys.permute(0,2,1,3).contiguous()
+        values = values.permute(0,2,1,3).contiguous()
+        N, H, L, E = queries.shape
+        softmax_temp = self.softmax_temp or 1./sqrt(E)
+        
+        # Cluster the queries into groups
+        clusters, counts = self._create_query_groups(queries, query_lengths)
+        Q_grouped = _GroupQueries.apply(queries, clusters, counts)
+        # Compute the attention
+        QK = torch.einsum(&#34;nhle,nhse-&gt;nhls&#34;, Q_grouped, keys)
+        QK = QK + key_lengths.additive_matrix[:, None, None, :]
+        topk_values, topk = torch.topk(QK, self.topk, sorted=False, dim=-1)
+        assert topk.is_contiguous()
+
+        # Now compute the attention with only the bottom keys
+        V_bottomk, A_bottomk = self._bottomk_attention(
+            QK, values,
+            clusters, counts,
+            topk,
+            softmax_temp
+        )
+
+        # Now compute the attention with only the top keys
+        V_topk = self._topk_attention(
+            queries, keys, values,
+            clusters, counts,
+            topk, topk_values,
+            A_bottomk,
+            softmax_temp,
+            query_lengths
+        )
+        V_new = V_topk + V_bottomk
+
+        return V_new.permute(0, 2, 1, 3).contiguous()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, queries, keys, values, attn_mask, query_lengths, key_lengths)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, queries, keys, values, attn_mask, query_lengths,
+            key_lengths):
+    # Make sure that there is no attention mask
+    assert attn_mask.all_ones, (&#34;Improved-clustered attention cannot &#34;
+                                &#34;use an arbitrary attention mask.&#34;)
+
+    queries = queries.permute(0,2,1,3).contiguous()
+    keys = keys.permute(0,2,1,3).contiguous()
+    values = values.permute(0,2,1,3).contiguous()
+    N, H, L, E = queries.shape
+    softmax_temp = self.softmax_temp or 1./sqrt(E)
+    
+    # Cluster the queries into groups
+    clusters, counts = self._create_query_groups(queries, query_lengths)
+    Q_grouped = _GroupQueries.apply(queries, clusters, counts)
+    # Compute the attention
+    QK = torch.einsum(&#34;nhle,nhse-&gt;nhls&#34;, Q_grouped, keys)
+    QK = QK + key_lengths.additive_matrix[:, None, None, :]
+    topk_values, topk = torch.topk(QK, self.topk, sorted=False, dim=-1)
+    assert topk.is_contiguous()
+
+    # Now compute the attention with only the bottom keys
+    V_bottomk, A_bottomk = self._bottomk_attention(
+        QK, values,
+        clusters, counts,
+        topk,
+        softmax_temp
+    )
+
+    # Now compute the attention with only the top keys
+    V_topk = self._topk_attention(
+        queries, keys, values,
+        clusters, counts,
+        topk, topk_values,
+        A_bottomk,
+        softmax_temp,
+        query_lengths
+    )
+    V_new = V_topk + V_bottomk
+
+    return V_new.permute(0, 2, 1, 3).contiguous()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers.attention" href="index.html">fast_transformers.attention</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="fast_transformers.attention.improved_clustered_attention.clustered_sparse_dot_product" href="#fast_transformers.attention.improved_clustered_attention.clustered_sparse_dot_product">clustered_sparse_dot_product</a></code></li>
+<li><code><a title="fast_transformers.attention.improved_clustered_attention.clustered_sparse_weighted_average" href="#fast_transformers.attention.improved_clustered_attention.clustered_sparse_weighted_average">clustered_sparse_weighted_average</a></code></li>
+<li><code><a title="fast_transformers.attention.improved_clustered_attention.sparse_dot_product" href="#fast_transformers.attention.improved_clustered_attention.sparse_dot_product">sparse_dot_product</a></code></li>
+<li><code><a title="fast_transformers.attention.improved_clustered_attention.sparse_weighted_average" href="#fast_transformers.attention.improved_clustered_attention.sparse_weighted_average">sparse_weighted_average</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention" href="#fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention">ImprovedClusteredAttention</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention.forward" href="#fast_transformers.attention.improved_clustered_attention.ImprovedClusteredAttention.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.6.dev1+g65b31fd</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
