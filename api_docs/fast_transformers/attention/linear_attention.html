@@ -94,7 +94,7 @@ class LinearAttention(Module):
         # Finally compute and return the new values
         V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
 
-        return V</code></pre>
+        return V.contiguous()</code></pre>
 </details>
 </section>
 <section>
@@ -203,7 +203,7 @@ eps: float, a small number to ensure the numerical stability of the
         # Finally compute and return the new values
         V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
 
-        return V</code></pre>
+        return V.contiguous()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -252,7 +252,7 @@ registered hooks while the latter silently ignores them.</p>
     # Finally compute and return the new values
     V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
 
-    return V</code></pre>
+    return V.contiguous()</code></pre>
 </details>
 </dd>
 </dl>

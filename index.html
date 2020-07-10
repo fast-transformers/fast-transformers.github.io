@@ -133,8 +133,7 @@
                 <h1 id="fast-transformers">Fast Transformers</h1>
 <p>Transformers are very succsessfull models that achieve state of the art
 performance in many natural language tasks. However, it is very difficult to
-scale them to long sequences due to the quadratic scaling of the
-self-attention.</p>
+scale them to long sequences due to the quadratic scaling of self-attention.</p>
 <p>This library was developed for our research on fast attention for transformers.
 You can find a list of our papers <a href="#research">below</a> as well as related papers
 and papers that we have implemented.</p>
@@ -174,7 +173,7 @@ y = bert(torch.rand(
 <li>CUDA toolchain (if you want to compile for GPUs)</li>
 </ul>
 <p>For most machines installation should be as simple as:</p>
-<pre><code class="bash">pip install --user fast_transformers
+<pre><code class="bash">pip install --user pytorch-fast-transformers
 </code></pre>
 
 <h2 id="research">Research</h2>
@@ -185,7 +184,9 @@ we encourage you to follow our research.</p>
 <li>Transformers are RNNs: Fast Autoregressive Transformers with
   Linear Attention (<a href="https://arxiv.org/abs/2006.16236">arxiv</a>,
   <a href="https://youtu.be/KBWh7XCUAi8">video</a>)</li>
-<li>Fast Transformers with Clustered Attention (preprint coming soon)</li>
+<li>Fast Transformers with Clustered Attention
+  (<a href="https://arxiv.org/abs/2007.04825">arxiv</a>,
+  <a href="https://clustered-transformers.github.io/blog/">blog</a>)</li>
 </ul>
 <p>If you found our research helpful or influential please consider citing</p>
 <pre><code>@inproceedings{katharopoulos_et_al_2020,
@@ -193,6 +194,13 @@ we encourage you to follow our research.</p>
     title = {Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention},
     booktitle = {Proceedings of the International Conference on Machine Learning (ICML)},
     year = {2020}
+}
+
+@article{vyas_et_al_2020,
+    author={Vyas, A. and Katharopoulos, A. and Fleuret, F.},
+    title={Fast Transformers with Clustered Attention},
+    journal={arXiv preprint arXiv:2007.04825},
+    year={2020}
 }
 </code></pre>
 
@@ -264,5 +272,5 @@ in the repository.</p>
 
 <!--
 MkDocs version : 1.1
-Build Date UTC : 2020-07-01 13:29:04
+Build Date UTC : 2020-07-10 16:50:49
 -->
