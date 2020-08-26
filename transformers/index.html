@@ -61,6 +61,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#transformerencoderlayer">TransformerEncoderLayer</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transformerdecoder">TransformerDecoder</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transformerdecoderlayer">TransformerDecoderLayer</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -125,20 +129,20 @@
               
                 <h1 id="transformers">Transformers</h1>
 <p>The <a href="/api_docs/fast_transformers/transformers.html">fast_transformers.transformers</a>
-module provides the <code>TransformerEncoder</code> and <code>TransformerEncoderLayer</code> classes
-that implement a common transformer encoder similar to the PyTorch API.</p>
+module provides the <code>TransformerEncoder</code> and <code>TransformerEncoderLayer</code> classes,
+as well as their decoder counterparts, that implement a common transformer
+encoder/decoder similar to the PyTorch API.</p>
 <p>However, an important difference is that the <code>TransformerEncoder</code> <strong>does not
 create</strong> the <code>TransformerEncoderLayer</code> which allows for injecting a different
 implementation with minimal code changes. The encoder layer follows the same
 principle and does not create the attention layer but receives it as an
 argument which allows for using many different attention implementations with
 an otherwise identical model.</p>
-<p>We also provide <a href="../recurrent_transformers/">recurrent transformer encoders</a>
-which are meant to be given each input one at a time for autoregressive
-inference.</p>
+<p>We also provide <a href="../recurrent_transformers/">recurrent transformer encoders and
+decoders</a> which are meant to be given each input one
+at a time for autoregressive inference.</p>
 <h2 id="forward-method">Forward method</h2>
-<p>Both the transformer encoder and the transformer encoder layer accept the same
-parameters for the <code>forward()</code> method.</p>
+<p><strong>TransformerEncoder</strong> or <strong>TransformerEncoderLayer</strong></p>
 <pre><code>forward(x, attn_mask=None, length_mask=None)
 </code></pre>
 
@@ -156,6 +160,28 @@ parameters for the <code>forward()</code> method.</p>
 </ul>
 <p>If the masks are not provided they are automatically created as an all ones
 mask for the attention mask and the size of the tensor for the length mask.</p>
+<p><strong>TransformerDecoder</strong> or <strong>TransformerDecoderLayer</strong></p>
+<pre><code>forward(x, memory, x_mask=None, x_length_mask=None, memory_mask=None, memory_length_mask=None)
+</code></pre>
+
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>x</strong>: The input features of shape (N, L, E) where N is the batch size,
+  L is the sequence length (padded) and E should be the same as the <code>d_model</code>
+  passed in the constructor.</li>
+<li><strong>memory</strong>: The memory features of shape (N, L', E) where N is the
+  batch size, L' is the memory's sequence length (padded) and E should be the
+  same as the <code>d_model</code>.</li>
+<li><strong>x_mask</strong>: An implementation of fast_transformers.masking.BaseMask
+  that encodes where each element of x can attend to in x. Namely the self
+  attention mask.</li>
+<li><strong>x_length_mask</strong>: An implementation of a BaseMask that encodes how
+  many elements each sequence in the batch consists of.</li>
+<li><strong>memory_mask</strong>: An implementation of BaseMask that encodes where each
+  element of x can attend to in the memory. Namely the cross attention mask.</li>
+<li><strong>memory_length_mask</strong>: An implementation of a BaseMask that encodes how
+  many elements each memory sequence in the batch consists of.</li>
+</ul>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>Unlike the PyTorch transformer the dimensions of the input are ordered
@@ -188,7 +214,8 @@ constructor argument.</p>
 <ul>
 <li><strong>attention</strong>: The attention implementation to use given as a nn.Module</li>
 <li><strong>d_model</strong>: The input feature dimensionality</li>
-<li><strong>n_heads</strong>: The number of heads for the multi head attention</li>
+<li><strong>n_heads</strong>: The number of heads for the multi head attention (Note: this
+  parameter is unnecessary and will be removed in the near future)</li>
 <li><strong>d_ff</strong>: The dimensionality of the intermediate features after the
   attention (default: d_model*4)</li>
 <li><strong>dropout</strong>: The dropout rate to apply to the intermediate features
@@ -196,6 +223,49 @@ constructor argument.</p>
 <li><strong>activation</strong>: Choose which activation to use for the feed
   forward part of the layer from the set {'relu', 'gelu'} (default: relu)</li>
 </ul>
+<h2 id="transformerdecoder">TransformerDecoder</h2>
+<pre><code>fast_transformers.transformers.TransformerDecoder(layers, norm_layer=None)
+</code></pre>
+
+<p>The TransformerDecoder is simply a container for transformer decoder layers.
+These layers are passed as a list upon construction. Similar to the
+TransformerEncoder, it is a Sequential that is aware of masking and a second
+argument <code>memory</code> and properly forwards everything to the
+TransformerDecoderLayer instances.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>layers</strong>: A list of TransformerDecoderLayer instances or other nn.Module
+  instances that implement the same interface</li>
+<li><strong>norm_layer</strong>: A normalization layer to be applied to the final output
+  (default: None which means no normalization)</li>
+</ul>
+<h2 id="transformerdecoderlayer">TransformerDecoderLayer</h2>
+<pre><code>fast_transformers.transformers.TransformerDecoderLayer(self_attention, cross_attention, d_model, d_ff=None, dropout=0.1, activation='relu')
+</code></pre>
+
+<p>Similar to the encoder layer, this layer implements the decoder that
+PyTorch implements but can be used with any attention implementation
+because it receives the attention layers as constructor arguments.</p>
+<ul>
+<li><strong>self_attention</strong>: The attention implementation to use for self attention
+  given as a nn.Module</li>
+<li><strong>cross_attention</strong>: The attention implementation to use for cross attention
+  given as a nn.Module</li>
+<li><strong>d_model</strong>: The input feature dimensionality</li>
+<li><strong>d_ff</strong>: The dimensionality of the intermediate features after the
+  attention (default: d_model*4)</li>
+<li><strong>dropout</strong>: The dropout rate to apply to the intermediate features
+  (default: 0.1)</li>
+<li><strong>activation</strong>: Choose which activation to use for the feed
+  forward part of the layer from the set {'relu', 'gelu'} (default: relu)</li>
+</ul>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>The <code>TransformerDecoderLayer</code> accepts different attention
+    layers for self attention and cross attention. This allows, for instance,
+    for building transformers with linear self attention and softmax cross
+    attention.</p>
+</div>
               
             </div>
           </div>

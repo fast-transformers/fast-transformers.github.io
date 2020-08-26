@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
-<title>fast_transformers.attention.linear_attention API documentation</title>
-<meta name="description" content="Implement unmasked linear attention." />
+<title>fast_transformers.recurrent.attention.self_attention.linear_attention API documentation</title>
+<meta name="description" content="Implement the causally masked linear attention as a recurrent model." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,10 +17,10 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>fast_transformers.attention.linear_attention</code></h1>
+<h1 class="title">Module <code>fast_transformers.recurrent.attention.self_attention.linear_attention</code></h1>
 </header>
 <section id="section-intro">
-<p>Implement unmasked linear attention.</p>
+<p>Implement the causally masked linear attention as a recurrent model.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -31,34 +31,27 @@
 # Apoorv Vyas &lt;avyas@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;Implement unmasked linear attention.&#34;&#34;&#34;
+&#34;&#34;&#34;Implement the causally masked linear attention as a recurrent model.&#34;&#34;&#34;
 
 import torch
 from torch.nn import Module
 
-from ..attention_registry import AttentionRegistry, Optional, Callable
+from ....attention_registry import RecurrentAttentionRegistry, Optional, \
+    Callable
+from ..._utils import check_state
 
 
 def elu_feature_map(x):
     return torch.nn.functional.elu(x) + 1
 
 
-class LinearAttention(Module):
-    &#34;&#34;&#34;Implement unmasked attention using dot product of feature maps in
-    O(N D^2) complexity.
+class RecurrentLinearAttention(Module):
+    &#34;&#34;&#34;Implement fast_transformers.attention.causal_linear_attention as a
+    fixed-dimensional state recurrent model.
 
-    Given the queries, keys and values as Q, K, V instead of computing
-
-        V&#39; = softmax(Q.mm(K.t()), dim=-1).mm(V),
-
-    we make use of a feature map function Φ(.) and perform the following
-    computation
-
-        V&#39; = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-
-    The above can be computed in O(N D^2) complexity where D is the
-    dimensionality of Q, K and V and N is the sequence length. Depending on the
-    feature map, however, the complexity of the attention might be limited.
+    See fast_transformers.attention.linear_attention and
+    fast_transformers.attention.causal_linear_attention for the general concept
+    of replacing the softmax with feature maps.
 
     Arguments
     ---------
@@ -68,41 +61,60 @@ class LinearAttention(Module):
              denominator (default: 1e-6)
     &#34;&#34;&#34;
     def __init__(self, feature_map=None, eps=1e-6):
-        super(LinearAttention, self).__init__()
+        super(RecurrentLinearAttention, self).__init__()
         self.feature_map = feature_map or elu_feature_map
         self.eps = eps
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        # Apply the feature map to the queries and keys
-        Q = self.feature_map(queries)
-        K = self.feature_map(keys)
+    def forward(self, query, key, value, state=None, memory=None):
+        # Normalize state/memory
+        state = check_state(state, memory)
 
-        # Apply the key padding mask and make sure that the attn_mask is
-        # all_ones
-        if not attn_mask.all_ones:
-            raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                                &#34;attention masks&#34;))
-        K = K * key_lengths.float_matrix[:, :, None, None]
+        # Apply the feature map to the query and key
+        Q = self.feature_map(query)
+        K = self.feature_map(key)
 
-        # Compute the KV matrix, namely the dot product of keys and values so
-        # that we never explicitly compute the attention matrix and thus
-        # decrease the complexity
-        KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+        # Extract some shapes
+        N, H, D = Q.shape
+        _, _, M = value.shape
 
-        # Compute the normalizer
-        Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
+        # Extract the memory or initialize it
+        if state is None:
+            Si = query.new_zeros((N, H, D, M))
+            Zi = query.new_zeros((N, H, D))
+        else:
+            Si, Zi = state
 
-        # Finally compute and return the new values
-        V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
+        # Ensure the batch size did not change
+        if len(Si) != N:
+            raise ValueError(&#34;The batch size changed during iteration&#34;)
 
-        return V.contiguous()
+        # Update the internal state
+        #
+        # NOTE: The if clause is added due to GitHub PR #10. Simply using the
+        # following two lines does not perform the operation in place which
+        # means it is slower for inference.
+        if K.grad_fn is not None or value.grad_fn is not None:
+            Zi = Zi + K
+            Si = Si + torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+        else:
+            Zi += K
+            Si += torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+
+        # Compute the output
+        Z = 1. / (torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Zi) + self.eps)
+        V = torch.einsum(&#34;nhd,nhdm,nh-&gt;nhm&#34;, Q, Si, Z)
+
+        return V, [Si, Zi]
 
 
 # Register the attention implementation so that it becomes available in our
 # builders
-AttentionRegistry.register(
-    &#34;linear&#34;, LinearAttention,
+RecurrentAttentionRegistry.register(
+    &#34;linear&#34;, RecurrentLinearAttention,
+    [(&#34;feature_map&#34;, Optional(Callable))]
+)
+RecurrentAttentionRegistry.register(
+    &#34;causal-linear&#34;, RecurrentLinearAttention,
     [(&#34;feature_map&#34;, Optional(Callable))]
 )</code></pre>
 </details>
@@ -114,7 +126,7 @@ AttentionRegistry.register(
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.elu_feature_map"><code class="name flex">
+<dt id="fast_transformers.recurrent.attention.self_attention.linear_attention.elu_feature_map"><code class="name flex">
 <span>def <span class="ident">elu_feature_map</span></span>(<span>x)</span>
 </code></dt>
 <dd>
@@ -132,23 +144,16 @@ AttentionRegistry.register(
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.LinearAttention"><code class="flex name class">
-<span>class <span class="ident">LinearAttention</span></span>
+<dt id="fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention"><code class="flex name class">
+<span>class <span class="ident">RecurrentLinearAttention</span></span>
 <span>(</span><span>feature_map=None, eps=1e-06)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implement unmasked attention using dot product of feature maps in
-O(N D^2) complexity.</p>
-<p>Given the queries, keys and values as Q, K, V instead of computing</p>
-<pre><code>V' = softmax(Q.mm(K.t()), dim=-1).mm(V),
-</code></pre>
-<p>we make use of a feature map function Φ(.) and perform the following
-computation</p>
-<pre><code>V' = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-</code></pre>
-<p>The above can be computed in O(N D^2) complexity where D is the
-dimensionality of Q, K and V and N is the sequence length. Depending on the
-feature map, however, the complexity of the attention might be limited.</p>
+<section class="desc"><p>Implement fast_transformers.attention.causal_linear_attention as a
+fixed-dimensional state recurrent model.</p>
+<p>See fast_transformers.attention.linear_attention and
+fast_transformers.attention.causal_linear_attention for the general concept
+of replacing the softmax with feature maps.</p>
 <h2 id="arguments">Arguments</h2>
 <pre><code>feature_map: callable, a callable that applies the feature map to the
              last dimension of a tensor (default: elu(x)+1)
@@ -160,22 +165,13 @@ eps: float, a small number to ensure the numerical stability of the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class LinearAttention(Module):
-    &#34;&#34;&#34;Implement unmasked attention using dot product of feature maps in
-    O(N D^2) complexity.
+<pre><code class="python">class RecurrentLinearAttention(Module):
+    &#34;&#34;&#34;Implement fast_transformers.attention.causal_linear_attention as a
+    fixed-dimensional state recurrent model.
 
-    Given the queries, keys and values as Q, K, V instead of computing
-
-        V&#39; = softmax(Q.mm(K.t()), dim=-1).mm(V),
-
-    we make use of a feature map function Φ(.) and perform the following
-    computation
-
-        V&#39; = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-
-    The above can be computed in O(N D^2) complexity where D is the
-    dimensionality of Q, K and V and N is the sequence length. Depending on the
-    feature map, however, the complexity of the attention might be limited.
+    See fast_transformers.attention.linear_attention and
+    fast_transformers.attention.causal_linear_attention for the general concept
+    of replacing the softmax with feature maps.
 
     Arguments
     ---------
@@ -185,35 +181,50 @@ eps: float, a small number to ensure the numerical stability of the
              denominator (default: 1e-6)
     &#34;&#34;&#34;
     def __init__(self, feature_map=None, eps=1e-6):
-        super(LinearAttention, self).__init__()
+        super(RecurrentLinearAttention, self).__init__()
         self.feature_map = feature_map or elu_feature_map
         self.eps = eps
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        # Apply the feature map to the queries and keys
-        Q = self.feature_map(queries)
-        K = self.feature_map(keys)
+    def forward(self, query, key, value, state=None, memory=None):
+        # Normalize state/memory
+        state = check_state(state, memory)
 
-        # Apply the key padding mask and make sure that the attn_mask is
-        # all_ones
-        if not attn_mask.all_ones:
-            raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                                &#34;attention masks&#34;))
-        K = K * key_lengths.float_matrix[:, :, None, None]
+        # Apply the feature map to the query and key
+        Q = self.feature_map(query)
+        K = self.feature_map(key)
 
-        # Compute the KV matrix, namely the dot product of keys and values so
-        # that we never explicitly compute the attention matrix and thus
-        # decrease the complexity
-        KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+        # Extract some shapes
+        N, H, D = Q.shape
+        _, _, M = value.shape
 
-        # Compute the normalizer
-        Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
+        # Extract the memory or initialize it
+        if state is None:
+            Si = query.new_zeros((N, H, D, M))
+            Zi = query.new_zeros((N, H, D))
+        else:
+            Si, Zi = state
 
-        # Finally compute and return the new values
-        V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
+        # Ensure the batch size did not change
+        if len(Si) != N:
+            raise ValueError(&#34;The batch size changed during iteration&#34;)
 
-        return V.contiguous()</code></pre>
+        # Update the internal state
+        #
+        # NOTE: The if clause is added due to GitHub PR #10. Simply using the
+        # following two lines does not perform the operation in place which
+        # means it is slower for inference.
+        if K.grad_fn is not None or value.grad_fn is not None:
+            Zi = Zi + K
+            Si = Si + torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+        else:
+            Zi += K
+            Si += torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+
+        # Compute the output
+        Z = 1. / (torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Zi) + self.eps)
+        V = torch.einsum(&#34;nhd,nhdm,nh-&gt;nhm&#34;, Q, Si, Z)
+
+        return V, [Si, Zi]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -221,8 +232,8 @@ eps: float, a small number to ensure the numerical stability of the
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.LinearAttention.forward"><code class="name flex">
-<span>def <span class="ident">forward</span></span>(<span>self, queries, keys, values, attn_mask, query_lengths, key_lengths)</span>
+<dt id="fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, query, key, value, state=None, memory=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Defines the computation performed at every call.</p>
@@ -238,31 +249,46 @@ registered hooks while the latter silently ignores them.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def forward(self, queries, keys, values, attn_mask, query_lengths,
-            key_lengths):
-    # Apply the feature map to the queries and keys
-    Q = self.feature_map(queries)
-    K = self.feature_map(keys)
+<pre><code class="python">def forward(self, query, key, value, state=None, memory=None):
+    # Normalize state/memory
+    state = check_state(state, memory)
 
-    # Apply the key padding mask and make sure that the attn_mask is
-    # all_ones
-    if not attn_mask.all_ones:
-        raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                            &#34;attention masks&#34;))
-    K = K * key_lengths.float_matrix[:, :, None, None]
+    # Apply the feature map to the query and key
+    Q = self.feature_map(query)
+    K = self.feature_map(key)
 
-    # Compute the KV matrix, namely the dot product of keys and values so
-    # that we never explicitly compute the attention matrix and thus
-    # decrease the complexity
-    KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+    # Extract some shapes
+    N, H, D = Q.shape
+    _, _, M = value.shape
 
-    # Compute the normalizer
-    Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
+    # Extract the memory or initialize it
+    if state is None:
+        Si = query.new_zeros((N, H, D, M))
+        Zi = query.new_zeros((N, H, D))
+    else:
+        Si, Zi = state
 
-    # Finally compute and return the new values
-    V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
+    # Ensure the batch size did not change
+    if len(Si) != N:
+        raise ValueError(&#34;The batch size changed during iteration&#34;)
 
-    return V.contiguous()</code></pre>
+    # Update the internal state
+    #
+    # NOTE: The if clause is added due to GitHub PR #10. Simply using the
+    # following two lines does not perform the operation in place which
+    # means it is slower for inference.
+    if K.grad_fn is not None or value.grad_fn is not None:
+        Zi = Zi + K
+        Si = Si + torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+    else:
+        Zi += K
+        Si += torch.einsum(&#34;nhd,nhm-&gt;nhdm&#34;, K, value)
+
+    # Compute the output
+    Z = 1. / (torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Zi) + self.eps)
+    V = torch.einsum(&#34;nhd,nhdm,nh-&gt;nhm&#34;, Q, Si, Z)
+
+    return V, [Si, Zi]</code></pre>
 </details>
 </dd>
 </dl>
@@ -278,20 +304,20 @@ registered hooks while the latter silently ignores them.</p>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="fast_transformers.attention" href="index.html">fast_transformers.attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.self_attention" href="index.html">fast_transformers.recurrent.attention.self_attention</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="fast_transformers.attention.linear_attention.elu_feature_map" href="#fast_transformers.attention.linear_attention.elu_feature_map">elu_feature_map</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.self_attention.linear_attention.elu_feature_map" href="#fast_transformers.recurrent.attention.self_attention.linear_attention.elu_feature_map">elu_feature_map</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="fast_transformers.attention.linear_attention.LinearAttention" href="#fast_transformers.attention.linear_attention.LinearAttention">LinearAttention</a></code></h4>
+<h4><code><a title="fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention" href="#fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention">RecurrentLinearAttention</a></code></h4>
 <ul class="">
-<li><code><a title="fast_transformers.attention.linear_attention.LinearAttention.forward" href="#fast_transformers.attention.linear_attention.LinearAttention.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention.forward" href="#fast_transformers.recurrent.attention.self_attention.linear_attention.RecurrentLinearAttention.forward">forward</a></code></li>
 </ul>
 </li>
 </ul>

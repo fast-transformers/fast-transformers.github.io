@@ -75,8 +75,6 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#integrate-with-the-builder">Integrate with the Builder</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#future-changes">Future changes</a>
-    </li>
     </ul>
                     </li>
                 </ul>
@@ -131,9 +129,10 @@ kernel attention instead of softmax attention.</p>
 <p>Our attention layer will follow closely the implementation of
 <a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/attention/full_attention.py">FullAttention</a>. Let's start with the skeleton of our module.</p>
 <pre><code class="python">class QuadraticAttention(Module):
-    def __init__(self, eps=1e-6):
+    def __init__(self, quadratic_temp=1.0, eps=1e-6):
         super(QuadraticAttention, self).__init__()
         self.eps = eps
+        self.quadratic_temp = quadratic_temp
 
     def forward(self, queries, keys, values, attn_mask, query_lengths,
                 key_lengths):
@@ -144,15 +143,16 @@ kernel attention instead of softmax attention.</p>
 heads by the <a href="../attention/">AttentionLayer</a>. This means that we need only implement the
 attention part.</p>
 <pre><code class="python">class QuadraticAttention(Module):
-    def __init__(self, eps=1e-6):
+    def __init__(self, quadratic_temp=1.0, eps=1e-6):
         super(QuadraticAttention, self).__init__()
         self.eps = eps
+        self.quadratic_temp = quadratic_temp
 
     def forward(self, queries, keys, values, attn_mask, query_lengths,
                 key_lengths):
         # compute the unnormalized attention
         QK = torch.einsum(&quot;nlhe,nshe-&gt;nhls&quot;, queries, keys) # compute the dot products
-        QK = torch.square(QK) # implement our custom attention twist
+        QK = torch.square(self.quadratic_temp * QK) # implement our custom attention twist
         QK = QK * attn_mask.float_matrix # use the attention mask as a multiplicative mask
         QK = QK * key_lengths.float_matrix[:, None, None] # also a multiplicative mask
 
@@ -164,41 +164,34 @@ attention part.</p>
 </code></pre>
 
 <h2 id="integrate-with-the-builder">Integrate with the Builder</h2>
-<p>To add it as an option to the <code>TransformerEncoderBuilder</code> we have to edit two
-files. Firstly, we have to add it as an option to the
-<a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/builders/attention_builder.py">AttentionBuilder.attention_type</a> as follows:</p>
-<pre><code class="python">class AttentionBuilder(object):
-    ...
-    ...
-    @attention_type.setter
-    def attention_type(self, val):
-        attentions = [&quot;full&quot;, &quot;clustered&quot;, &quot;improved-clustered&quot;,
-                      &quot;improved-causal&quot;, &quot;linear&quot;, &quot;causal-linear&quot;,
-                      &quot;reformer&quot;, &quot;exact-topk&quot;, &quot;square&quot;] # add the 'square' to the list
-        if val not in attentions:
-            raise ValueError((&quot;{!r} is not one of the available attention &quot;
-                              &quot;types {!r}&quot;).format(val, attentions))
-        self._attention_type = val
-    ...
-    ...
+<p>To add it as an option to the <code>TransformerEncoderBuilder</code> or the
+<code>TransformerDecoderBuilder</code> we have to register our new attention in the
+appropriate <a href="../builders/#attention-registry">attention registry</a>. The available
+registries are</p>
+<ul>
+<li>AttentionRegistry</li>
+<li>RecurrentAttentionRegistry</li>
+<li>RecurrentCrossAttentionRegistry</li>
+</ul>
+<p>Similar to <a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/attention/full_attention.py">FullAttention</a> we will use <code>AttentionRegistry</code> because our
+implementation is not recurrent. The following snippet integrates our quadratic
+attention with the builders.</p>
+<pre><code class="python">from fast_transformers.attention_registry import AttentionRegistry, \
+    Optional, Float  # we also need these to add our new
+                     # parameter 'quadratic_temp'
+
+AttentionRegistry.register(
+    &quot;square&quot;, QuadraticAttention,  # attention_type, class pair
+    [
+        (&quot;quadratic_temp&quot;, Optional(Float, 1.0))  # an optional parameter named
+                                                  # 'quadratic_temp' of type
+                                                  # float and with default
+                                                  # value 1.0
+    ]
+)
 </code></pre>
 
-<p>Secondly, we have to edit the <a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/builders/transformer_encoder_builder.py">TransformerEncoderBuilder</a> to create the
-correct attention layer when the attention_type is set to 'square'.</p>
-<pre><code class="python">class TransformerEncoderBuilder(BaseTransformerBuilder):
-    ...
-    ...
-    def _get_attention(self):
-        attentions = {
-            ...
-            ...
-            &quot;square&quot;: QuadraticAttention
-        }
-        ...
-        ...
-</code></pre>
-
-<p>After those changes we can use the builder to create transformers with our new
+<p>Afterwards we can use the builder to create transformers with our new
 attention layer.</p>
 <pre><code class="python">quadratic_bert = TransformerEncoderBuilder.from_kwargs(
     attention_type=&quot;square&quot;, # here we select our custom attention layer
@@ -207,15 +200,10 @@ attention layer.</p>
     query_dimensions=64,
     value_dimensions=64,
     feed_forward_dimensions=3072,
-    activation=&quot;gelu&quot;
+    activation=&quot;gelu&quot;,
+    quadratic_temp=5.0  # set the temperature for our quadratic layer
 )
 </code></pre>
-
-<h2 id="future-changes">Future changes</h2>
-<p>Editing two files to add a new attention implementation to a transformer
-builder is obviously suboptimal. We are in the process of changing this
-procedure with a more streamlined way of registering new attention layers to
-the transformer builders.</p>
               
             </div>
           </div>

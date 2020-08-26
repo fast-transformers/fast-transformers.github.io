@@ -4,10 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
-<title>fast_transformers.attention.exact_topk_attention API documentation</title>
-<meta name="description" content="Implement the oracle top-k attention. The top-k keys are exact ones.
-MultiHeadAttention module. Note that this module is to be used in conjuction
-with …" />
+<title>fast_transformers.recurrent.attention.cross_attention.full_attention API documentation</title>
+<meta name="description" content="Implement the typical softmax attention as a recurrent cross attention
+module to speed up autoregressive decoding." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -19,92 +18,74 @@ with …" />
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>fast_transformers.attention.exact_topk_attention</code></h1>
+<h1 class="title">Module <code>fast_transformers.recurrent.attention.cross_attention.full_attention</code></h1>
 </header>
 <section id="section-intro">
-<p>Implement the oracle top-k attention. The top-k keys are exact ones.
-MultiHeadAttention module. Note that this module is to be used in conjuction
-with the AttentionLayer in order to work.</p>
+<p>Implement the typical softmax attention as a recurrent cross attention
+module to speed up autoregressive decoding.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#
 # Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
-# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
-# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;Implement the oracle top-k attention. The top-k keys are exact ones.
-MultiHeadAttention module. Note that this module is to be used in conjuction
-with the AttentionLayer in order to work.&#34;&#34;&#34;
+&#34;&#34;&#34;Implement the typical softmax attention as a recurrent cross attention
+module to speed up autoregressive decoding.&#34;&#34;&#34;
 
 from math import sqrt
 
 import torch
 from torch.nn import Dropout, Module
 
-from ..attention_registry import AttentionRegistry, Optional, Int, Float
+from ....attention_registry import RecurrentCrossAttentionRegistry, Optional, \
+    Float
 
-
-class ExactTopKAttention(Module):
-    &#34;&#34;&#34;Implement the oracle top-k softmax attention.
+class RecurrentCrossFullAttention(Module):
+    &#34;&#34;&#34;Implement autoregressive softmax cross attention as a recurrent
+    module.
 
     Arguments
     ---------
-        top-k: The top k keys to attend to  (default: 32)
         softmax_temp: The temperature to use for the softmax attention.
                       (default: 1/sqrt(d_keys) where d_keys is computed at
                       runtime)
         attention_dropout: The dropout rate to apply to the attention
                            (default: 0.1)
     &#34;&#34;&#34;
-    def __init__(self, topk=32, softmax_temp=None, attention_dropout=0.1):
-        super(ExactTopKAttention, self).__init__()
-        self.topk = topk
+    def __init__(self, softmax_temp=None, attention_dropout=0.1):
+        super(RecurrentCrossFullAttention, self).__init__()
         self.softmax_temp = softmax_temp
         self.dropout = Dropout(attention_dropout)
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
+    def forward(self, query, keys, values, key_lengths, state=None):
         # Extract some shapes and compute the temperature
-        N, L, H, E = queries.shape
-        _, S, _, D = values.shape
+        N, H, E = query.shape
         softmax_temp = self.softmax_temp or 1./sqrt(E)
 
-        # Compute the unnormalized attention and apply the masks
-        QK = torch.einsum(&#34;nlhe,nshe-&gt;nhls&#34;, queries, keys)
-        topk = min(self.topk, L)
-        
-        if not attn_mask.all_ones:
-            QK = QK + attn_mask.additive_matrix
-        QK = QK + key_lengths.additive_matrix[:, None, None]
+        # Extract the keys and values either from the arguments or the state
+        if state is not None:
+            keys, values = state
 
-        topk_values, topk_idx = torch.topk(QK, topk, sorted=False, dim=-1)
-        mask = QK.new_ones(QK.shape) *  float(&#34;-inf&#34;) 
-        mask[
-            torch.arange(N, device=QK.device).view(N, 1, 1, 1),
-            torch.arange(H, device=QK.device).view(1, H, 1, 1),
-            torch.arange(L, device=QK.device).view(1, 1, L, 1),
-            topk_idx,
-        ] = 0.
-
-        QK = QK + mask 
+        # Compute the unnormalized attention and apply the key length mask
+        QK = torch.einsum(&#34;nhe,nshe-&gt;nsh&#34;, query, keys)
+        QK = QK + key_lengths.additive_matrix[:, :, None]
 
         # Compute the attention and the weighted average
-        A = self.dropout(torch.softmax(softmax_temp * QK, dim=-1))
-        V = torch.einsum(&#34;nhls,nshd-&gt;nlhd&#34;, A, values)
+        A = self.dropout(torch.softmax(softmax_temp * QK, dim=1))
+        V = torch.einsum(&#34;nsh,nshd-&gt;nhd&#34;, A, values)
 
-        # Make sure that what we return is contiguous
-        return V.contiguous()
+        # Make sure that we return a contiguous value
+        return V.contiguous(), [keys, values]
 
 
 # Register the attention implementation so that it becomes available in our
 # builders
-AttentionRegistry.register(
-    &#34;exact-topk&#34;, ExactTopKAttention,
+RecurrentCrossAttentionRegistry.register(
+    &#34;full&#34;, RecurrentCrossFullAttention,
     [
-        (&#34;topk&#34;, Optional(Int, 32)),
         (&#34;softmax_temp&#34;, Optional(Float)),
         (&#34;attention_dropout&#34;, Optional(Float, 0.1))
     ]
@@ -120,15 +101,15 @@ AttentionRegistry.register(
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="fast_transformers.attention.exact_topk_attention.ExactTopKAttention"><code class="flex name class">
-<span>class <span class="ident">ExactTopKAttention</span></span>
-<span>(</span><span>topk=32, softmax_temp=None, attention_dropout=0.1)</span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention"><code class="flex name class">
+<span>class <span class="ident">RecurrentCrossFullAttention</span></span>
+<span>(</span><span>softmax_temp=None, attention_dropout=0.1)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implement the oracle top-k softmax attention.</p>
+<section class="desc"><p>Implement autoregressive softmax cross attention as a recurrent
+module.</p>
 <h2 id="arguments">Arguments</h2>
-<pre><code>top-k: The top k keys to attend to  (default: 32)
-softmax_temp: The temperature to use for the softmax attention.
+<pre><code>softmax_temp: The temperature to use for the softmax attention.
               (default: 1/sqrt(d_keys) where d_keys is computed at
               runtime)
 attention_dropout: The dropout rate to apply to the attention
@@ -139,56 +120,42 @@ attention_dropout: The dropout rate to apply to the attention
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class ExactTopKAttention(Module):
-    &#34;&#34;&#34;Implement the oracle top-k softmax attention.
+<pre><code class="python">class RecurrentCrossFullAttention(Module):
+    &#34;&#34;&#34;Implement autoregressive softmax cross attention as a recurrent
+    module.
 
     Arguments
     ---------
-        top-k: The top k keys to attend to  (default: 32)
         softmax_temp: The temperature to use for the softmax attention.
                       (default: 1/sqrt(d_keys) where d_keys is computed at
                       runtime)
         attention_dropout: The dropout rate to apply to the attention
                            (default: 0.1)
     &#34;&#34;&#34;
-    def __init__(self, topk=32, softmax_temp=None, attention_dropout=0.1):
-        super(ExactTopKAttention, self).__init__()
-        self.topk = topk
+    def __init__(self, softmax_temp=None, attention_dropout=0.1):
+        super(RecurrentCrossFullAttention, self).__init__()
         self.softmax_temp = softmax_temp
         self.dropout = Dropout(attention_dropout)
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
+    def forward(self, query, keys, values, key_lengths, state=None):
         # Extract some shapes and compute the temperature
-        N, L, H, E = queries.shape
-        _, S, _, D = values.shape
+        N, H, E = query.shape
         softmax_temp = self.softmax_temp or 1./sqrt(E)
 
-        # Compute the unnormalized attention and apply the masks
-        QK = torch.einsum(&#34;nlhe,nshe-&gt;nhls&#34;, queries, keys)
-        topk = min(self.topk, L)
-        
-        if not attn_mask.all_ones:
-            QK = QK + attn_mask.additive_matrix
-        QK = QK + key_lengths.additive_matrix[:, None, None]
+        # Extract the keys and values either from the arguments or the state
+        if state is not None:
+            keys, values = state
 
-        topk_values, topk_idx = torch.topk(QK, topk, sorted=False, dim=-1)
-        mask = QK.new_ones(QK.shape) *  float(&#34;-inf&#34;) 
-        mask[
-            torch.arange(N, device=QK.device).view(N, 1, 1, 1),
-            torch.arange(H, device=QK.device).view(1, H, 1, 1),
-            torch.arange(L, device=QK.device).view(1, 1, L, 1),
-            topk_idx,
-        ] = 0.
-
-        QK = QK + mask 
+        # Compute the unnormalized attention and apply the key length mask
+        QK = torch.einsum(&#34;nhe,nshe-&gt;nsh&#34;, query, keys)
+        QK = QK + key_lengths.additive_matrix[:, :, None]
 
         # Compute the attention and the weighted average
-        A = self.dropout(torch.softmax(softmax_temp * QK, dim=-1))
-        V = torch.einsum(&#34;nhls,nshd-&gt;nlhd&#34;, A, values)
+        A = self.dropout(torch.softmax(softmax_temp * QK, dim=1))
+        V = torch.einsum(&#34;nsh,nshd-&gt;nhd&#34;, A, values)
 
-        # Make sure that what we return is contiguous
-        return V.contiguous()</code></pre>
+        # Make sure that we return a contiguous value
+        return V.contiguous(), [keys, values]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -196,8 +163,8 @@ attention_dropout: The dropout rate to apply to the attention
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="fast_transformers.attention.exact_topk_attention.ExactTopKAttention.forward"><code class="name flex">
-<span>def <span class="ident">forward</span></span>(<span>self, queries, keys, values, attn_mask, query_lengths, key_lengths)</span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, query, keys, values, key_lengths, state=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Defines the computation performed at every call.</p>
@@ -213,38 +180,25 @@ registered hooks while the latter silently ignores them.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def forward(self, queries, keys, values, attn_mask, query_lengths,
-            key_lengths):
+<pre><code class="python">def forward(self, query, keys, values, key_lengths, state=None):
     # Extract some shapes and compute the temperature
-    N, L, H, E = queries.shape
-    _, S, _, D = values.shape
+    N, H, E = query.shape
     softmax_temp = self.softmax_temp or 1./sqrt(E)
 
-    # Compute the unnormalized attention and apply the masks
-    QK = torch.einsum(&#34;nlhe,nshe-&gt;nhls&#34;, queries, keys)
-    topk = min(self.topk, L)
-    
-    if not attn_mask.all_ones:
-        QK = QK + attn_mask.additive_matrix
-    QK = QK + key_lengths.additive_matrix[:, None, None]
+    # Extract the keys and values either from the arguments or the state
+    if state is not None:
+        keys, values = state
 
-    topk_values, topk_idx = torch.topk(QK, topk, sorted=False, dim=-1)
-    mask = QK.new_ones(QK.shape) *  float(&#34;-inf&#34;) 
-    mask[
-        torch.arange(N, device=QK.device).view(N, 1, 1, 1),
-        torch.arange(H, device=QK.device).view(1, H, 1, 1),
-        torch.arange(L, device=QK.device).view(1, 1, L, 1),
-        topk_idx,
-    ] = 0.
-
-    QK = QK + mask 
+    # Compute the unnormalized attention and apply the key length mask
+    QK = torch.einsum(&#34;nhe,nshe-&gt;nsh&#34;, query, keys)
+    QK = QK + key_lengths.additive_matrix[:, :, None]
 
     # Compute the attention and the weighted average
-    A = self.dropout(torch.softmax(softmax_temp * QK, dim=-1))
-    V = torch.einsum(&#34;nhls,nshd-&gt;nlhd&#34;, A, values)
+    A = self.dropout(torch.softmax(softmax_temp * QK, dim=1))
+    V = torch.einsum(&#34;nsh,nshd-&gt;nhd&#34;, A, values)
 
-    # Make sure that what we return is contiguous
-    return V.contiguous()</code></pre>
+    # Make sure that we return a contiguous value
+    return V.contiguous(), [keys, values]</code></pre>
 </details>
 </dd>
 </dl>
@@ -260,15 +214,15 @@ registered hooks while the latter silently ignores them.</p>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="fast_transformers.attention" href="index.html">fast_transformers.attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention" href="index.html">fast_transformers.recurrent.attention.cross_attention</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="fast_transformers.attention.exact_topk_attention.ExactTopKAttention" href="#fast_transformers.attention.exact_topk_attention.ExactTopKAttention">ExactTopKAttention</a></code></h4>
+<h4><code><a title="fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention" href="#fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention">RecurrentCrossFullAttention</a></code></h4>
 <ul class="">
-<li><code><a title="fast_transformers.attention.exact_topk_attention.ExactTopKAttention.forward" href="#fast_transformers.attention.exact_topk_attention.ExactTopKAttention.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention.forward" href="#fast_transformers.recurrent.attention.cross_attention.full_attention.RecurrentCrossFullAttention.forward">forward</a></code></li>
 </ul>
 </li>
 </ul>

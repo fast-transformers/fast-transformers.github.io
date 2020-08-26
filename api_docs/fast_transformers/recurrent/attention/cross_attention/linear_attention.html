@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
-<title>fast_transformers.attention.linear_attention API documentation</title>
-<meta name="description" content="Implement unmasked linear attention." />
+<title>fast_transformers.recurrent.attention.cross_attention.linear_attention API documentation</title>
+<meta name="description" content="Implement unmasked linear attention as a recurrent cross attention module to
+speed up autoregressive decoding." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,48 +18,39 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>fast_transformers.attention.linear_attention</code></h1>
+<h1 class="title">Module <code>fast_transformers.recurrent.attention.cross_attention.linear_attention</code></h1>
 </header>
 <section id="section-intro">
-<p>Implement unmasked linear attention.</p>
+<p>Implement unmasked linear attention as a recurrent cross attention module to
+speed up autoregressive decoding.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#
 # Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
-# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
-# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;Implement unmasked linear attention.&#34;&#34;&#34;
+&#34;&#34;&#34;Implement unmasked linear attention as a recurrent cross attention module to
+speed up autoregressive decoding.&#34;&#34;&#34;
 
 import torch
 from torch.nn import Module
 
-from ..attention_registry import AttentionRegistry, Optional, Callable
+from ....attention_registry import RecurrentCrossAttentionRegistry, Optional, \
+    Callable
 
 
 def elu_feature_map(x):
     return torch.nn.functional.elu(x) + 1
 
 
-class LinearAttention(Module):
-    &#34;&#34;&#34;Implement unmasked attention using dot product of feature maps in
-    O(N D^2) complexity.
+class RecurrentCrossLinearAttention(Module):
+    &#34;&#34;&#34;Implement autoregressive linear cross attention as a recurrent
+    module.
 
-    Given the queries, keys and values as Q, K, V instead of computing
-
-        V&#39; = softmax(Q.mm(K.t()), dim=-1).mm(V),
-
-    we make use of a feature map function Φ(.) and perform the following
-    computation
-
-        V&#39; = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-
-    The above can be computed in O(N D^2) complexity where D is the
-    dimensionality of Q, K and V and N is the sequence length. Depending on the
-    feature map, however, the complexity of the attention might be limited.
+    See fast_transformers.attention.linear_attention.LinearAttention .
 
     Arguments
     ---------
@@ -68,41 +60,36 @@ class LinearAttention(Module):
              denominator (default: 1e-6)
     &#34;&#34;&#34;
     def __init__(self, feature_map=None, eps=1e-6):
-        super(LinearAttention, self).__init__()
+        super(RecurrentCrossLinearAttention, self).__init__()
         self.feature_map = feature_map or elu_feature_map
         self.eps = eps
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        # Apply the feature map to the queries and keys
-        Q = self.feature_map(queries)
-        K = self.feature_map(keys)
+    def forward(self, query, keys, values, key_lengths, state=None):
+        # Compute the feature representation of the query
+        Q = self.feature_map(query)
 
-        # Apply the key padding mask and make sure that the attn_mask is
-        # all_ones
-        if not attn_mask.all_ones:
-            raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                                &#34;attention masks&#34;))
-        K = K * key_lengths.float_matrix[:, :, None, None]
+        # If the state is not given compute the key-value matrix and the
+        # normalizers, namely compute whatever is needed in order to attend to
+        # keys and values with a given query.
+        if state is None:
+            K = self.feature_map(keys)
+            K = K * key_lengths.float_matrix[:, :, None, None]
+            S = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+            Z = K.sum(dim=1)
+        else:
+            S, Z = state
 
-        # Compute the KV matrix, namely the dot product of keys and values so
-        # that we never explicitly compute the attention matrix and thus
-        # decrease the complexity
-        KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+        # Given S and Z now we can efficiently compute the new value
+        QZ = 1/(torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Z)+self.eps)
+        V = torch.einsum(&#34;nhd,nhmd,nh-&gt;nhm&#34;, Q, S, QZ)
 
-        # Compute the normalizer
-        Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
-
-        # Finally compute and return the new values
-        V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
-
-        return V.contiguous()
+        return V.contiguous(), [S, Z]
 
 
 # Register the attention implementation so that it becomes available in our
 # builders
-AttentionRegistry.register(
-    &#34;linear&#34;, LinearAttention,
+RecurrentCrossAttentionRegistry.register(
+    &#34;linear&#34;, RecurrentCrossLinearAttention,
     [(&#34;feature_map&#34;, Optional(Callable))]
 )</code></pre>
 </details>
@@ -114,7 +101,7 @@ AttentionRegistry.register(
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.elu_feature_map"><code class="name flex">
+<dt id="fast_transformers.recurrent.attention.cross_attention.linear_attention.elu_feature_map"><code class="name flex">
 <span>def <span class="ident">elu_feature_map</span></span>(<span>x)</span>
 </code></dt>
 <dd>
@@ -132,23 +119,14 @@ AttentionRegistry.register(
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.LinearAttention"><code class="flex name class">
-<span>class <span class="ident">LinearAttention</span></span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention"><code class="flex name class">
+<span>class <span class="ident">RecurrentCrossLinearAttention</span></span>
 <span>(</span><span>feature_map=None, eps=1e-06)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implement unmasked attention using dot product of feature maps in
-O(N D^2) complexity.</p>
-<p>Given the queries, keys and values as Q, K, V instead of computing</p>
-<pre><code>V' = softmax(Q.mm(K.t()), dim=-1).mm(V),
-</code></pre>
-<p>we make use of a feature map function Φ(.) and perform the following
-computation</p>
-<pre><code>V' = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-</code></pre>
-<p>The above can be computed in O(N D^2) complexity where D is the
-dimensionality of Q, K and V and N is the sequence length. Depending on the
-feature map, however, the complexity of the attention might be limited.</p>
+<section class="desc"><p>Implement autoregressive linear cross attention as a recurrent
+module.</p>
+<p>See fast_transformers.attention.linear_attention.LinearAttention .</p>
 <h2 id="arguments">Arguments</h2>
 <pre><code>feature_map: callable, a callable that applies the feature map to the
              last dimension of a tensor (default: elu(x)+1)
@@ -160,22 +138,11 @@ eps: float, a small number to ensure the numerical stability of the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class LinearAttention(Module):
-    &#34;&#34;&#34;Implement unmasked attention using dot product of feature maps in
-    O(N D^2) complexity.
+<pre><code class="python">class RecurrentCrossLinearAttention(Module):
+    &#34;&#34;&#34;Implement autoregressive linear cross attention as a recurrent
+    module.
 
-    Given the queries, keys and values as Q, K, V instead of computing
-
-        V&#39; = softmax(Q.mm(K.t()), dim=-1).mm(V),
-
-    we make use of a feature map function Φ(.) and perform the following
-    computation
-
-        V&#39; = normalize(Φ(Q).mm(Φ(K).t())).mm(V).
-
-    The above can be computed in O(N D^2) complexity where D is the
-    dimensionality of Q, K and V and N is the sequence length. Depending on the
-    feature map, however, the complexity of the attention might be limited.
+    See fast_transformers.attention.linear_attention.LinearAttention .
 
     Arguments
     ---------
@@ -185,35 +152,30 @@ eps: float, a small number to ensure the numerical stability of the
              denominator (default: 1e-6)
     &#34;&#34;&#34;
     def __init__(self, feature_map=None, eps=1e-6):
-        super(LinearAttention, self).__init__()
+        super(RecurrentCrossLinearAttention, self).__init__()
         self.feature_map = feature_map or elu_feature_map
         self.eps = eps
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        # Apply the feature map to the queries and keys
-        Q = self.feature_map(queries)
-        K = self.feature_map(keys)
+    def forward(self, query, keys, values, key_lengths, state=None):
+        # Compute the feature representation of the query
+        Q = self.feature_map(query)
 
-        # Apply the key padding mask and make sure that the attn_mask is
-        # all_ones
-        if not attn_mask.all_ones:
-            raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                                &#34;attention masks&#34;))
-        K = K * key_lengths.float_matrix[:, :, None, None]
+        # If the state is not given compute the key-value matrix and the
+        # normalizers, namely compute whatever is needed in order to attend to
+        # keys and values with a given query.
+        if state is None:
+            K = self.feature_map(keys)
+            K = K * key_lengths.float_matrix[:, :, None, None]
+            S = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+            Z = K.sum(dim=1)
+        else:
+            S, Z = state
 
-        # Compute the KV matrix, namely the dot product of keys and values so
-        # that we never explicitly compute the attention matrix and thus
-        # decrease the complexity
-        KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+        # Given S and Z now we can efficiently compute the new value
+        QZ = 1/(torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Z)+self.eps)
+        V = torch.einsum(&#34;nhd,nhmd,nh-&gt;nhm&#34;, Q, S, QZ)
 
-        # Compute the normalizer
-        Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
-
-        # Finally compute and return the new values
-        V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
-
-        return V.contiguous()</code></pre>
+        return V.contiguous(), [S, Z]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -221,8 +183,8 @@ eps: float, a small number to ensure the numerical stability of the
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="fast_transformers.attention.linear_attention.LinearAttention.forward"><code class="name flex">
-<span>def <span class="ident">forward</span></span>(<span>self, queries, keys, values, attn_mask, query_lengths, key_lengths)</span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, query, keys, values, key_lengths, state=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Defines the computation performed at every call.</p>
@@ -238,31 +200,26 @@ registered hooks while the latter silently ignores them.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def forward(self, queries, keys, values, attn_mask, query_lengths,
-            key_lengths):
-    # Apply the feature map to the queries and keys
-    Q = self.feature_map(queries)
-    K = self.feature_map(keys)
+<pre><code class="python">def forward(self, query, keys, values, key_lengths, state=None):
+    # Compute the feature representation of the query
+    Q = self.feature_map(query)
 
-    # Apply the key padding mask and make sure that the attn_mask is
-    # all_ones
-    if not attn_mask.all_ones:
-        raise RuntimeError((&#34;LinearAttention does not support arbitrary &#34;
-                            &#34;attention masks&#34;))
-    K = K * key_lengths.float_matrix[:, :, None, None]
+    # If the state is not given compute the key-value matrix and the
+    # normalizers, namely compute whatever is needed in order to attend to
+    # keys and values with a given query.
+    if state is None:
+        K = self.feature_map(keys)
+        K = K * key_lengths.float_matrix[:, :, None, None]
+        S = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+        Z = K.sum(dim=1)
+    else:
+        S, Z = state
 
-    # Compute the KV matrix, namely the dot product of keys and values so
-    # that we never explicitly compute the attention matrix and thus
-    # decrease the complexity
-    KV = torch.einsum(&#34;nshd,nshm-&gt;nhmd&#34;, K, values)
+    # Given S and Z now we can efficiently compute the new value
+    QZ = 1/(torch.einsum(&#34;nhd,nhd-&gt;nh&#34;, Q, Z)+self.eps)
+    V = torch.einsum(&#34;nhd,nhmd,nh-&gt;nhm&#34;, Q, S, QZ)
 
-    # Compute the normalizer
-    Z = 1/(torch.einsum(&#34;nlhd,nhd-&gt;nlh&#34;, Q, K.sum(dim=1))+self.eps)
-
-    # Finally compute and return the new values
-    V = torch.einsum(&#34;nlhd,nhmd,nlh-&gt;nlhm&#34;, Q, KV, Z)
-
-    return V.contiguous()</code></pre>
+    return V.contiguous(), [S, Z]</code></pre>
 </details>
 </dd>
 </dl>
@@ -278,20 +235,20 @@ registered hooks while the latter silently ignores them.</p>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="fast_transformers.attention" href="index.html">fast_transformers.attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention" href="index.html">fast_transformers.recurrent.attention.cross_attention</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="fast_transformers.attention.linear_attention.elu_feature_map" href="#fast_transformers.attention.linear_attention.elu_feature_map">elu_feature_map</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.linear_attention.elu_feature_map" href="#fast_transformers.recurrent.attention.cross_attention.linear_attention.elu_feature_map">elu_feature_map</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="fast_transformers.attention.linear_attention.LinearAttention" href="#fast_transformers.attention.linear_attention.LinearAttention">LinearAttention</a></code></h4>
+<h4><code><a title="fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention" href="#fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention">RecurrentCrossLinearAttention</a></code></h4>
 <ul class="">
-<li><code><a title="fast_transformers.attention.linear_attention.LinearAttention.forward" href="#fast_transformers.attention.linear_attention.LinearAttention.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention.forward" href="#fast_transformers.recurrent.attention.cross_attention.linear_attention.RecurrentCrossLinearAttention.forward">forward</a></code></li>
 </ul>
 </li>
 </ul>

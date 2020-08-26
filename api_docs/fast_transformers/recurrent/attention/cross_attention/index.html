@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
-<title>fast_transformers API documentation</title>
-<meta name="description" content="Provide a library with fast transformer implementations." />
+<title>fast_transformers.recurrent.attention.cross_attention API documentation</title>
+<meta name="description" content="Autoregressive implementations for cross attention as a recurrent module …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,84 +17,79 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>fast_transformers</code></h1>
+<h1 class="title">Module <code>fast_transformers.recurrent.attention.cross_attention</code></h1>
 </header>
 <section id="section-intro">
-<p>Provide a library with fast transformer implementations.</p>
+<p>Autoregressive implementations for cross attention as a recurrent module.</p>
+<p>The attention implementations in this module expect one input for query and a
+sequence of inputs for keys and values. The sequence for the keys and values is
+fixed for all queries.</p>
+<h2 id="example">Example</h2>
+<pre><code>import torch
+
+from fast_transformers.recurrent.attention import         RecurrentCrossAttentionLayer, RecurrentCrossFullAttention
+
+att = RecurrentCrossAttentionLayer(RecurrentCrossFullAttention(), 16, 4)
+state = None
+x = torch.rand(8, 16)
+memory = torch.rand(8, 64, 16)
+for i in range(10):
+    x, state = att(x, memory, memory, state=state)
+</code></pre>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#
 # Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
-# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
-# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;Provide a library with fast transformer implementations.&#34;&#34;&#34;
+&#34;&#34;&#34;Autoregressive implementations for cross attention as a recurrent module.
 
-__author__ = &#34;Angelos Katharopoulos, Apoorv Vyas&#34;
-__copyright__ = &#34;Copyright (c) 2020 Idiap Research Institute&#34;
-__license__ = &#34;MIT&#34;
-__maintainer__ = &#34;Angelos Katharopoulos, Apoorv Vyas&#34;
-__email__ = &#34;angelos.katharopoulos@idiap.ch, avyas@idiap.ch&#34;
-__url__ = &#34;https://github.com/idiap/fast-transformers&#34;
-__version__ = &#34;0.1.3&#34;</code></pre>
+The attention implementations in this module expect one input for query and a
+sequence of inputs for keys and values. The sequence for the keys and values is
+fixed for all queries.
+
+Example
+--------
+
+    import torch
+
+    from fast_transformers.recurrent.attention import \
+        RecurrentCrossAttentionLayer, RecurrentCrossFullAttention
+
+    att = RecurrentCrossAttentionLayer(RecurrentCrossFullAttention(), 16, 4)
+    state = None
+    x = torch.rand(8, 16)
+    memory = torch.rand(8, 64, 16)
+    for i in range(10):
+        x, state = att(x, memory, memory, state=state)
+&#34;&#34;&#34;
+
+from .attention_layer import RecurrentCrossAttentionLayer
+from .full_attention import RecurrentCrossFullAttention
+from .linear_attention import RecurrentCrossLinearAttention</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="fast_transformers.aggregate" href="aggregate/index.html">fast_transformers.aggregate</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.recurrent.attention.cross_attention.attention_layer" href="attention_layer.html">fast_transformers.recurrent.attention.cross_attention.attention_layer</a></code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Similar to the corresponding module in fast_transformers.attention, this
+module performs all the query, key, value projections and output projections
+…</p></section>
 </dd>
-<dt><code class="name"><a title="fast_transformers.attention" href="attention/index.html">fast_transformers.attention</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.recurrent.attention.cross_attention.full_attention" href="full_attention.html">fast_transformers.recurrent.attention.cross_attention.full_attention</a></code></dt>
 <dd>
-<section class="desc"><p>Implementations of different types of attention mechanisms.</p></section>
+<section class="desc"><p>Implement the typical softmax attention as a recurrent cross attention
+module to speed up autoregressive decoding.</p></section>
 </dd>
-<dt><code class="name"><a title="fast_transformers.attention_registry" href="attention_registry/index.html">fast_transformers.attention_registry</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.recurrent.attention.cross_attention.linear_attention" href="linear_attention.html">fast_transformers.recurrent.attention.cross_attention.linear_attention</a></code></dt>
 <dd>
-<section class="desc"><p>Allow for the dynamic registration of new attention implementations …</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.builders" href="builders/index.html">fast_transformers.builders</a></code></dt>
-<dd>
-<section class="desc"><p>This module implements builders that simplify building complex transformer
-architectures with different attention mechanisms …</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.causal_product" href="causal_product/index.html">fast_transformers.causal_product</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.clustering" href="clustering/index.html">fast_transformers.clustering</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.hashing" href="hashing/index.html">fast_transformers.hashing</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.masking" href="masking.html">fast_transformers.masking</a></code></dt>
-<dd>
-<section class="desc"><p>Create types of masks to be used in various places in transformers …</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.recurrent" href="recurrent/index.html">fast_transformers.recurrent</a></code></dt>
-<dd>
-<section class="desc"><p>Implementations of transformers as recurrent functions.</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.sparse_product" href="sparse_product/index.html">fast_transformers.sparse_product</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.transformers" href="transformers.html">fast_transformers.transformers</a></code></dt>
-<dd>
-<section class="desc"><p>Implement transformer encoders and decoders that are going to be used with
-different attention mechanisms …</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.weight_mapper" href="weight_mapper.html">fast_transformers.weight_mapper</a></code></dt>
-<dd>
-<section class="desc"><p>The weight mapper module provides a utility to load transformer model
-weights from other implementations to a fast_transformers model …</p></section>
+<section class="desc"><p>Implement unmasked linear attention as a recurrent cross attention module to
+speed up autoregressive decoding.</p></section>
 </dd>
 </dl>
 </section>
@@ -108,23 +103,21 @@ weights from other implementations to a fast_transformers model …</p></section
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#example">Example</a></li>
+</ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers.recurrent.attention" href="../index.html">fast_transformers.recurrent.attention</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="fast_transformers.aggregate" href="aggregate/index.html">fast_transformers.aggregate</a></code></li>
-<li><code><a title="fast_transformers.attention" href="attention/index.html">fast_transformers.attention</a></code></li>
-<li><code><a title="fast_transformers.attention_registry" href="attention_registry/index.html">fast_transformers.attention_registry</a></code></li>
-<li><code><a title="fast_transformers.builders" href="builders/index.html">fast_transformers.builders</a></code></li>
-<li><code><a title="fast_transformers.causal_product" href="causal_product/index.html">fast_transformers.causal_product</a></code></li>
-<li><code><a title="fast_transformers.clustering" href="clustering/index.html">fast_transformers.clustering</a></code></li>
-<li><code><a title="fast_transformers.hashing" href="hashing/index.html">fast_transformers.hashing</a></code></li>
-<li><code><a title="fast_transformers.masking" href="masking.html">fast_transformers.masking</a></code></li>
-<li><code><a title="fast_transformers.recurrent" href="recurrent/index.html">fast_transformers.recurrent</a></code></li>
-<li><code><a title="fast_transformers.sparse_product" href="sparse_product/index.html">fast_transformers.sparse_product</a></code></li>
-<li><code><a title="fast_transformers.transformers" href="transformers.html">fast_transformers.transformers</a></code></li>
-<li><code><a title="fast_transformers.weight_mapper" href="weight_mapper.html">fast_transformers.weight_mapper</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.attention_layer" href="attention_layer.html">fast_transformers.recurrent.attention.cross_attention.attention_layer</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.full_attention" href="full_attention.html">fast_transformers.recurrent.attention.cross_attention.full_attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.linear_attention" href="linear_attention.html">fast_transformers.recurrent.attention.cross_attention.linear_attention</a></code></li>
 </ul>
 </li>
 </ul>

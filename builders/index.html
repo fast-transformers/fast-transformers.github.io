@@ -67,9 +67,17 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Builders</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#transformer-builder-api">Transformer Builder API</a>
+    <li class="toctree-l2"><a class="reference internal" href="#builder-api">Builder API</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#available-builders">Available Builders</a>
+    <li class="toctree-l2"><a class="reference internal" href="#transformer-builders">Transformer Builders</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#attention-builders">Attention Builders</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#attention-composition">Attention composition</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#attention-registry">Attention Registry</a>
+    </li>
+        </ul>
     </li>
     </ul>
                     </li>
@@ -124,7 +132,7 @@
                 <h1 id="builders">Builders</h1>
 <p>The builders module takes care of simplifying the construction of transformer
 networks. The following example showcases how simple it is to create a
-transformer encoder using the <a href="/api_docs/fast_transformers/builders/transformer_encoder_builder.html">TransformerEncoderBuilder</a>.</p>
+transformer encoder using the <a href="/api_docs/fast_transformers/builders/transformer_builders.html">TransformerEncoderBuilder</a>.</p>
 <pre><code class="python">import torch
 
 # Building without a builder
@@ -161,7 +169,7 @@ without the builder, it becomes apparent that changing the creation logic with
 the builder is significantly easier. For instance, the <code>attention_type</code> can be
 read from a configuration file or from command line arguments.
 The rest of this page describes the API of the builders.</p>
-<h2 id="transformer-builder-api">Transformer Builder API</h2>
+<h2 id="builder-api">Builder API</h2>
 <p>The interface for all the builders is a simple method <code>get()</code> without any
 arguments that returns a PyTorch module that implements a transformer.</p>
 <p>All the parameters of the builders are simple python properties that can be set
@@ -176,9 +184,9 @@ builder.parameter = changed_value      # change a parameter
 other_transformer = builder.get()      # construct another transformer
 </code></pre>
 
-<p>The <a href="/api_docs/fast_transformers/builders/base.html">BaseTransformerBuilder</a> provides helper static methods that make it
-simpler to set multiple builder arguments at once from configuration files or
-command line arguments.</p>
+<p>The <a href="/api_docs/fast_transformers/builders/base.html">BaseBuilder</a> provides helper static methods that make it simpler to set
+multiple builder arguments at once from configuration files or command line
+arguments.</p>
 <pre><code class="python">from_dictionary(dictionary, strict=True)
 </code></pre>
 
@@ -195,11 +203,76 @@ correspond to a builder parameter.</p>
 <p>Construct a builder from an argument list returned by the python argparse
 module. If <code>strict</code> is set to True then throw a ValueError in case an argument
 does not correspond to a builder parameter.</p>
-<h2 id="available-builders">Available Builders</h2>
+<h2 id="transformer-builders">Transformer Builders</h2>
+<p>There exist the following transformer builders for creating encoder and decoder
+architectures for inference and training:</p>
 <ul>
-<li><strong><a href="/api_docs/fast_transformers/builders/transformer_encoder_builder.html">TransformerEncoderBuilder</a></strong> constructs instances of <a href="/api_docs/fast_transformers/transformers.html#fast_transformers.transformers.TransformerEncoder">TransformerEncoder</a></li>
-<li><strong><a href="/api_docs/fast_transformers/builders/recurrent_encoder_builder.html">RecurrentEncoderBuilder</a></strong> constructs instances of <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerEncoder">RecurrentTransformerEncoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>TransformerEncoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/transformers.html#fast_transformers.transformers.TransformerEncoder">TransformerEncoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>TransformerDecoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/transformers.html#fast_transformers.transformers.TransformerDecoder">TransformerDecoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>RecurrentEncoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerEncoder">RecurrentTransformerEncoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>RecurrentDecoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerDecoder">RecurrentTransformerDecoder</a></li>
 </ul>
+<h2 id="attention-builders">Attention Builders</h2>
+<p><a href="/api_docs/fast_transformers/builders/attention_builders.html">Attention builders</a> simplify the construction of the various attention
+modules and allow for plugin-like extension mechanisms when creating new
+attention implementations.</p>
+<p>Their API is the same as the transformer builders, namely they accept
+attributes as parameters and then calling <code>get(attention_type: str)</code> constructs
+an <code>nn.Module</code> that implements an attention layer.</p>
+<pre><code class="python">from fast_transformers.builders import AttentionBuilder
+
+builder = AttentionBuilder.from_kwargs(
+    attention_dropout=0.1,                   # used by softmax attention
+    softmax_temp=1.,                         # used by softmax attention
+    feature_map=lambda x: (x&gt;0).float() * x  # used by linear
+)
+softmax = builder.get(&quot;full&quot;)
+linear = builder.get(&quot;linear&quot;)
+</code></pre>
+
+<p>The library provides the following attention builders that create the
+correspondingly named attention modules.</p>
+<ul>
+<li>AttentionBuilder</li>
+<li>RecurrentAttentionBuilder</li>
+<li>RecurrentCrossAttentionBuilder</li>
+</ul>
+<h3 id="attention-composition">Attention composition</h3>
+<p>The attention builders allow for <em>attention composition</em> through a simple
+convention of the <code>attention_type</code> parameter. Attention composition allows the
+creation of an attention layer that accepts one or more attention layers as a
+parameters. An example of this pattern is the <a href="/api_docs/fast_transformers/attention/conditional_full_attention.html">ConditionalFullAttention</a> that
+performs full softmax attention when the sequence length is small and delegates
+to another attention type when the sequence length becomes large.</p>
+<p>The following example code creates an attention layer that uses <a href="/api_docs/fast_transformers/attention/improved_clustered_attention.html">improved
+clustered attention</a> for sequences larger than 512 elements and full softmax
+attention otherwise.</p>
+<pre><code class="python">builder = AttentionBuilder.from_kwargs(
+    attention_dropout=0.1,  # used by all
+    softmax_temp=0.125,
+    topk=32,                # used by improved clustered
+    clusters=256,
+    bits=32,
+    length_limit=512        # used by conditional attention
+)
+attention = builder.get(&quot;conditional-full:improved-clustered&quot;)
+</code></pre>
+
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>Attention layers that are designed for composition cannot be used
+    standalone. For instance <code>conditional-full</code> is not a valid
+    attention type by itsself.</p>
+</div>
+
+<h3 id="attention-registry">Attention Registry</h3>
+<p>The attention builders allow the dynamic registering of attention
+implementations through an <a href="/api_docs/fast_transformers/attention_registry/index.html">attention registry</a>. There are three
+registries, one for each available builder. You can find plenty of usage
+examples in the provided attention implementations (e.g. <a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/attention/full_attention.py">FullAttention</a>).</p>
+<p>This should only concern developers of new attention implementations and a
+simple example can be found in the <a href="../custom_attention_layer/">custom attention
+layer</a> section of the docs.</p>
               
             </div>
           </div>

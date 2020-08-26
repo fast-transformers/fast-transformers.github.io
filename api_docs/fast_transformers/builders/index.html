@@ -71,38 +71,60 @@ Example usage:
     transformer = builder.get()
 &#34;&#34;&#34;
 
-from .transformer_encoder_builder import TransformerEncoderBuilder
-from .recurrent_encoder_builder import RecurrentEncoderBuilder</code></pre>
+__all__ = [
+    &#34;AttentionBuilder&#34;,
+    &#34;RecurrentAttentionBuilder&#34;,
+    &#34;RecurrentCrossAttentionBuilder&#34;
+]
+
+# Import the attention implementations so that they register themselves with
+# the builder. Attention implementations external to the library should be
+# imported before using the builders.
+#
+# TODO: Should this behaviour change? Namely, should all attention
+#       implementations be imported in order to be useable? This also allows
+#       using the library even partially built, for instance.
+from ..attention import \
+    FullAttention, \
+    LinearAttention, CausalLinearAttention, \
+    ClusteredAttention, ImprovedClusteredAttention, \
+    ReformerAttention, \
+    ExactTopKAttention, ImprovedClusteredCausalAttention, \
+    ConditionalFullAttention
+del FullAttention, \
+    LinearAttention, CausalLinearAttention, \
+    ClusteredAttention, ImprovedClusteredAttention, \
+    ReformerAttention, \
+    ExactTopKAttention, ImprovedClusteredCausalAttention, \
+    ConditionalFullAttention
+
+
+from .attention_builders import \
+    AttentionBuilder, \
+    RecurrentAttentionBuilder, \
+    RecurrentCrossAttentionBuilder
+
+from .transformer_builders import \
+    TransformerEncoderBuilder, \
+    RecurrentEncoderBuilder, \
+    TransformerDecoderBuilder, \
+    RecurrentDecoderBuilder</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="fast_transformers.builders.attention_builder" href="attention_builder.html">fast_transformers.builders.attention_builder</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.builders.attention_builders" href="attention_builders.html">fast_transformers.builders.attention_builders</a></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
 <dt><code class="name"><a title="fast_transformers.builders.base" href="base.html">fast_transformers.builders.base</a></code></dt>
 <dd>
-<section class="desc"><p>Define the interface that should be implemented by every builder …</p></section>
+<section class="desc"><p>Provide a class for the others to inherit some useful functionality.</p></section>
 </dd>
-<dt><code class="name"><a title="fast_transformers.builders.common_encoder_builder" href="common_encoder_builder.html">fast_transformers.builders.common_encoder_builder</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.builders.transformer_builders" href="transformer_builders.html">fast_transformers.builders.transformer_builders</a></code></dt>
 <dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.builders.recurrent_attention_builder" href="recurrent_attention_builder.html">fast_transformers.builders.recurrent_attention_builder</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.builders.recurrent_encoder_builder" href="recurrent_encoder_builder.html">fast_transformers.builders.recurrent_encoder_builder</a></code></dt>
-<dd>
-<section class="desc"><p>Implement a builder for transformers implemented as recurrent networks
-mostly for autoregressive inference …</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.builders.transformer_encoder_builder" href="transformer_encoder_builder.html">fast_transformers.builders.transformer_encoder_builder</a></code></dt>
-<dd>
-<section class="desc"><p>Implement the TransformerEncoderBuilder that constructs transformer encoders
-with various attention mechanisms …</p></section>
+<section class="desc"><p>Build complex transformer architectures for inference or training easily.</p></section>
 </dd>
 </dl>
 </section>
@@ -111,6 +133,118 @@ with various attention mechanisms …</p></section>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.builders.AttentionBuilder"><code class="flex name class">
+<span>class <span class="ident">AttentionBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build attention implementations for batch sequence processing or
+training.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AttentionBuilder(BaseAttentionBuilder):
+    &#34;&#34;&#34;Build attention implementations for batch sequence processing or
+    training.&#34;&#34;&#34;
+    def __init__(self):
+        super(AttentionBuilder, self).__init__(AttentionRegistry)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions">available_attentions</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.get" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type">validate_attention_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.RecurrentAttentionBuilder"><code class="flex name class">
+<span>class <span class="ident">RecurrentAttentionBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build attention implementations for autoregressive sequence
+processing.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RecurrentAttentionBuilder(BaseAttentionBuilder):
+    &#34;&#34;&#34;Build attention implementations for autoregressive sequence
+    processing.&#34;&#34;&#34;
+    def __init__(self):
+        super(RecurrentAttentionBuilder, self).__init__(
+            RecurrentAttentionRegistry
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions">available_attentions</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.get" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type">validate_attention_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.RecurrentCrossAttentionBuilder"><code class="flex name class">
+<span>class <span class="ident">RecurrentCrossAttentionBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build attention implementations for autoregressive cross attention
+computation.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RecurrentCrossAttentionBuilder(BaseAttentionBuilder):
+    &#34;&#34;&#34;Build attention implementations for autoregressive cross attention
+    computation.&#34;&#34;&#34;
+    def __init__(self):
+        super(RecurrentCrossAttentionBuilder, self).__init__(
+            RecurrentCrossAttentionRegistry
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.available_attentions">available_attentions</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.get" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder.validate_attention_type">validate_attention_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -126,12 +260,22 @@ with various attention mechanisms …</p></section>
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="fast_transformers.builders.attention_builder" href="attention_builder.html">fast_transformers.builders.attention_builder</a></code></li>
+<li><code><a title="fast_transformers.builders.attention_builders" href="attention_builders.html">fast_transformers.builders.attention_builders</a></code></li>
 <li><code><a title="fast_transformers.builders.base" href="base.html">fast_transformers.builders.base</a></code></li>
-<li><code><a title="fast_transformers.builders.common_encoder_builder" href="common_encoder_builder.html">fast_transformers.builders.common_encoder_builder</a></code></li>
-<li><code><a title="fast_transformers.builders.recurrent_attention_builder" href="recurrent_attention_builder.html">fast_transformers.builders.recurrent_attention_builder</a></code></li>
-<li><code><a title="fast_transformers.builders.recurrent_encoder_builder" href="recurrent_encoder_builder.html">fast_transformers.builders.recurrent_encoder_builder</a></code></li>
-<li><code><a title="fast_transformers.builders.transformer_encoder_builder" href="transformer_encoder_builder.html">fast_transformers.builders.transformer_encoder_builder</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders" href="transformer_builders.html">fast_transformers.builders.transformer_builders</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.builders.AttentionBuilder" href="#fast_transformers.builders.AttentionBuilder">AttentionBuilder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.RecurrentAttentionBuilder" href="#fast_transformers.builders.RecurrentAttentionBuilder">RecurrentAttentionBuilder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.RecurrentCrossAttentionBuilder" href="#fast_transformers.builders.RecurrentCrossAttentionBuilder">RecurrentCrossAttentionBuilder</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>

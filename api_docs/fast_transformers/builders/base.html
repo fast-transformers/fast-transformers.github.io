@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
 <title>fast_transformers.builders.base API documentation</title>
-<meta name="description" content="Define the interface that should be implemented by every builder …" />
+<meta name="description" content="Provide a class for the others to inherit some useful functionality." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,10 +20,7 @@
 <h1 class="title">Module <code>fast_transformers.builders.base</code></h1>
 </header>
 <section id="section-intro">
-<p>Define the interface that should be implemented by every builder.</p>
-<p>Concisely, the interface is simply a parameterless get() method that constructs
-the transformer and the ability to set the builder parameters via public
-properties.</p>
+<p>Provide a class for the others to inherit some useful functionality.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -34,28 +31,18 @@ properties.</p>
 # Apoorv Vyas &lt;avyas@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;Define the interface that should be implemented by every builder.
+&#34;&#34;&#34;Provide a class for the others to inherit some useful functionality.&#34;&#34;&#34;
 
-Concisely, the interface is simply a parameterless get() method that constructs
-the transformer and the ability to set the builder parameters via public
-properties.
-&#34;&#34;&#34;
 
-class BaseTransformerBuilder(object):
-    &#34;&#34;&#34;The builder interface. Simply a get function with no parameters that
-    returns a torch.nn.Module.&#34;&#34;&#34;
-    def get(self):
-        &#34;&#34;&#34;Create and return the transformer.&#34;&#34;&#34;
-        raise NotImplementedError()
-
+class BaseBuilder(object):
     @classmethod
     def from_kwargs(cls, **kwargs):
         &#34;&#34;&#34;Construct a builder and set all the keyword arguments as parameters.
 
         The keyword argument strict is passed to
-        BaseTransformerBuilder.from_dictionary separately.
+        BaseBuilder.from_dictionary separately.
 
-        See BaseTransformerBuilder.from_dictionary().
+        See BaseBuilder.from_dictionary().
         &#34;&#34;&#34;
         strict = kwargs.pop(&#34;strict&#34;, True)
         return cls.from_dictionary(kwargs, strict=strict)
@@ -66,7 +53,7 @@ class BaseTransformerBuilder(object):
 
         To be used for building transformers from command line arguments.
 
-        See BaseTransformerBuilder.from_dictionary().
+        See BaseBuilder.from_dictionary().
         &#34;&#34;&#34;
         return cls.from_dictionary(vars(args), strict=strict)
 
@@ -96,13 +83,14 @@ class BaseTransformerBuilder(object):
         &#34;&#34;&#34;
         builder = cls()
         for k, v in dictionary.items():
-            if not hasattr(builder, k):
+            try:
+                setattr(builder, k, v)
+            except AttributeError:
                 if strict:
-                    raise ValueError((&#34;The transformer builder has no &#34;
+                    raise ValueError((&#34;The builder has no &#34;
                                       &#34;parameter {!r}&#34;).format(k))
                 else:
                     continue
-            setattr(builder, k, v)
         return builder</code></pre>
 </details>
 </section>
@@ -115,31 +103,24 @@ class BaseTransformerBuilder(object):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="fast_transformers.builders.base.BaseTransformerBuilder"><code class="flex name class">
-<span>class <span class="ident">BaseTransformerBuilder</span></span>
+<dt id="fast_transformers.builders.base.BaseBuilder"><code class="flex name class">
+<span>class <span class="ident">BaseBuilder</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>The builder interface. Simply a get function with no parameters that
-returns a torch.nn.Module.</p></section>
+<section class="desc"></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BaseTransformerBuilder(object):
-    &#34;&#34;&#34;The builder interface. Simply a get function with no parameters that
-    returns a torch.nn.Module.&#34;&#34;&#34;
-    def get(self):
-        &#34;&#34;&#34;Create and return the transformer.&#34;&#34;&#34;
-        raise NotImplementedError()
-
+<pre><code class="python">class BaseBuilder(object):
     @classmethod
     def from_kwargs(cls, **kwargs):
         &#34;&#34;&#34;Construct a builder and set all the keyword arguments as parameters.
 
         The keyword argument strict is passed to
-        BaseTransformerBuilder.from_dictionary separately.
+        BaseBuilder.from_dictionary separately.
 
-        See BaseTransformerBuilder.from_dictionary().
+        See BaseBuilder.from_dictionary().
         &#34;&#34;&#34;
         strict = kwargs.pop(&#34;strict&#34;, True)
         return cls.from_dictionary(kwargs, strict=strict)
@@ -150,7 +131,7 @@ returns a torch.nn.Module.</p></section>
 
         To be used for building transformers from command line arguments.
 
-        See BaseTransformerBuilder.from_dictionary().
+        See BaseBuilder.from_dictionary().
         &#34;&#34;&#34;
         return cls.from_dictionary(vars(args), strict=strict)
 
@@ -180,23 +161,24 @@ returns a torch.nn.Module.</p></section>
         &#34;&#34;&#34;
         builder = cls()
         for k, v in dictionary.items():
-            if not hasattr(builder, k):
+            try:
+                setattr(builder, k, v)
+            except AttributeError:
                 if strict:
-                    raise ValueError((&#34;The transformer builder has no &#34;
+                    raise ValueError((&#34;The builder has no &#34;
                                       &#34;parameter {!r}&#34;).format(k))
                 else:
                     continue
-            setattr(builder, k, v)
         return builder</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="fast_transformers.builders.recurrent_encoder_builder.RecurrentEncoderBuilder" href="recurrent_encoder_builder.html#fast_transformers.builders.recurrent_encoder_builder.RecurrentEncoderBuilder">RecurrentEncoderBuilder</a></li>
-<li><a title="fast_transformers.builders.transformer_encoder_builder.TransformerEncoderBuilder" href="transformer_encoder_builder.html#fast_transformers.builders.transformer_encoder_builder.TransformerEncoderBuilder">TransformerEncoderBuilder</a></li>
+<li><a title="fast_transformers.builders.attention_builders.BaseAttentionBuilder" href="attention_builders.html#fast_transformers.builders.attention_builders.BaseAttentionBuilder">BaseAttentionBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="transformer_builders.html#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
 </ul>
 <h3>Static methods</h3>
 <dl>
-<dt id="fast_transformers.builders.base.BaseTransformerBuilder.from_dictionary"><code class="name flex">
+<dt id="fast_transformers.builders.base.BaseBuilder.from_dictionary"><code class="name flex">
 <span>def <span class="ident">from_dictionary</span></span>(<span>dictionary, strict=True)</span>
 </code></dt>
 <dd>
@@ -247,24 +229,25 @@ def from_dictionary(cls, dictionary, strict=True):
     &#34;&#34;&#34;
     builder = cls()
     for k, v in dictionary.items():
-        if not hasattr(builder, k):
+        try:
+            setattr(builder, k, v)
+        except AttributeError:
             if strict:
-                raise ValueError((&#34;The transformer builder has no &#34;
+                raise ValueError((&#34;The builder has no &#34;
                                   &#34;parameter {!r}&#34;).format(k))
             else:
                 continue
-        setattr(builder, k, v)
     return builder</code></pre>
 </details>
 </dd>
-<dt id="fast_transformers.builders.base.BaseTransformerBuilder.from_kwargs"><code class="name flex">
+<dt id="fast_transformers.builders.base.BaseBuilder.from_kwargs"><code class="name flex">
 <span>def <span class="ident">from_kwargs</span></span>(<span>**kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Construct a builder and set all the keyword arguments as parameters.</p>
 <p>The keyword argument strict is passed to
-BaseTransformerBuilder.from_dictionary separately.</p>
-<p>See BaseTransformerBuilder.from_dictionary().</p></section>
+BaseBuilder.from_dictionary separately.</p>
+<p>See BaseBuilder.from_dictionary().</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -274,21 +257,21 @@ def from_kwargs(cls, **kwargs):
     &#34;&#34;&#34;Construct a builder and set all the keyword arguments as parameters.
 
     The keyword argument strict is passed to
-    BaseTransformerBuilder.from_dictionary separately.
+    BaseBuilder.from_dictionary separately.
 
-    See BaseTransformerBuilder.from_dictionary().
+    See BaseBuilder.from_dictionary().
     &#34;&#34;&#34;
     strict = kwargs.pop(&#34;strict&#34;, True)
     return cls.from_dictionary(kwargs, strict=strict)</code></pre>
 </details>
 </dd>
-<dt id="fast_transformers.builders.base.BaseTransformerBuilder.from_namespace"><code class="name flex">
+<dt id="fast_transformers.builders.base.BaseBuilder.from_namespace"><code class="name flex">
 <span>def <span class="ident">from_namespace</span></span>(<span>args, strict=False)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Construct a builder from an argparse Namespace.</p>
 <p>To be used for building transformers from command line arguments.</p>
-<p>See BaseTransformerBuilder.from_dictionary().</p></section>
+<p>See BaseBuilder.from_dictionary().</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -299,26 +282,9 @@ def from_namespace(cls, args, strict=False):
 
     To be used for building transformers from command line arguments.
 
-    See BaseTransformerBuilder.from_dictionary().
+    See BaseBuilder.from_dictionary().
     &#34;&#34;&#34;
     return cls.from_dictionary(vars(args), strict=strict)</code></pre>
-</details>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="fast_transformers.builders.base.BaseTransformerBuilder.get"><code class="name flex">
-<span>def <span class="ident">get</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Create and return the transformer.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get(self):
-    &#34;&#34;&#34;Create and return the transformer.&#34;&#34;&#34;
-    raise NotImplementedError()</code></pre>
 </details>
 </dd>
 </dl>
@@ -340,12 +306,11 @@ def from_namespace(cls, args, strict=False):
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="fast_transformers.builders.base.BaseTransformerBuilder" href="#fast_transformers.builders.base.BaseTransformerBuilder">BaseTransformerBuilder</a></code></h4>
+<h4><code><a title="fast_transformers.builders.base.BaseBuilder" href="#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></code></h4>
 <ul class="">
-<li><code><a title="fast_transformers.builders.base.BaseTransformerBuilder.from_dictionary" href="#fast_transformers.builders.base.BaseTransformerBuilder.from_dictionary">from_dictionary</a></code></li>
-<li><code><a title="fast_transformers.builders.base.BaseTransformerBuilder.from_kwargs" href="#fast_transformers.builders.base.BaseTransformerBuilder.from_kwargs">from_kwargs</a></code></li>
-<li><code><a title="fast_transformers.builders.base.BaseTransformerBuilder.from_namespace" href="#fast_transformers.builders.base.BaseTransformerBuilder.from_namespace">from_namespace</a></code></li>
-<li><code><a title="fast_transformers.builders.base.BaseTransformerBuilder.get" href="#fast_transformers.builders.base.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_dictionary" href="#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_kwargs" href="#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_namespace" href="#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
 </ul>
 </li>
 </ul>

@@ -79,8 +79,6 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#available-attentions">Available Attentions</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#builder">Builder</a>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
     </li>
     </ul>
@@ -129,14 +127,14 @@
 <p>The transformer layers implemented in the <a href="/api_docs/fast_transformers/transformers.html">fast_transformers.transformers</a>
 module are processing the entire sequence simultaneously. On the other hand,
 this module implements transfomers as recurrent networks. Namely as networks
-that process the sequence one element at a time while updating some memory.</p>
-<p>Since this API is subject to change we will briefly go over the current
-differences in comparison to the normal transformers API.</p>
-<h2 id="forward-method">Forward method</h2>
+that process the sequence one element at a time while updating some state.</p>
 <p>The TransformerEncoder and TransformerEncoderLayer give way to
 <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerEncoder">RecurrentTransformerEncoder</a> and <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerEncoderLayer">RecurrentTransformerEncoderLayer</a> and
-the <code>forward()</code> method changes as follows:</p>
-<pre><code>forward(x, memory=None)
+for the decoders <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerDecoder">RecurrentTransformerDecoder</a> and
+<a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerDecoderLayer">RecurrentTransformerDecoderLayer</a> respectively.</p>
+<h2 id="forward-method">Forward method</h2>
+<p><strong>RecurrentTransformerEncoder</strong> or <strong>RecurrentTransformerEncoderLayer</strong></p>
+<pre><code>forward(x, state=None)
 </code></pre>
 
 <p><strong>Arguments</strong></p>
@@ -144,23 +142,41 @@ the <code>forward()</code> method changes as follows:</p>
 <li><strong>x</strong>: The input features of shape (N, E) where N is the batch size and E is
   <code>d_model</code> passed in the constructor. Note that x corresponds to a specific
   element in the sequence and not the entire sequence.</li>
-<li><strong>memory</strong>: The memory is a python object that varies depending on the
+<li><strong>state</strong>: The state is a python object that varies depending on the
   attention implementation</li>
 </ul>
+<p><strong>RecurrentTransformerDecoder</strong> or <strong>RecurrentTransformerDecoderLayer</strong></p>
+<pre><code>forward(x, memory, memory_length_mask=None, state=None)
+</code></pre>
+
+<ul>
+<li><strong>x</strong>: The input features of shape (N, E) where N is the batch size and E is
+  <code>d_model</code> passed in the constructor. Note that x corresponds to a specific
+  element in the sequence and not the entire sequence.</li>
+<li><strong>memory</strong>: A sequence of features (N, S, E) that the input will attend
+  to. S is the sequence length and E is the same as for x.</li>
+<li><strong>memory_length_mask</strong>: An implementation of a BaseMask that encodes
+  how many elements each memory sequence in the batch consists of.</li>
+<li><strong>state</strong>: The state is a python object that varies depending on the
+  attention implementation</li>
+</ul>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>The masks are different in the recurrent implementations than in their
+    batch counterparts. Namely, recurrent encoders and decoders enforce a
+    triangular causal mask on self attention. In addition, recurrent decoders
+    enforce a full mask on cross attention.</p>
+</div>
+
 <h2 id="available-attentions">Available Attentions</h2>
 <p>Not all attention formulations can be written in an autoregressive fashion as a
 recurrent model. In particular, since the sequence is passed to the transformer
 element by element we have the same result as passing a causal mask to normal
 transformers. The current list for recurrent attention implementations is:</p>
 <ul>
-<li><a href="/api_docs/fast_transformers/recurrent/attention/linear_attention.html">LinearAttention</a></li>
-<li><a href="/api_docs/fast_transformers/recurrent/attention/full_attention.html">FullAttention</a></li>
+<li><a href="/api_docs/fast_transformers/recurrent/attention/self_attention/linear_attention.html">LinearAttention</a></li>
+<li><a href="/api_docs/fast_transformers/recurrent/attention/self_attention/full_attention.html">FullAttention</a></li>
 </ul>
-<h2 id="builder">Builder</h2>
-<p>Building a <code>RecurrentTransformerEncoder</code> is very similar to building a
-<code>TransformerEncoder</code>. We simply provide a different builder named
-<a href="/api_docs/fast_transformers/builders/recurrent_encoder_builder.html">RecurrentEncoderBuilder</a> that constructs <code>RecurrentTransformerEncoder</code>
-models.</p>
 <h2 id="example">Example</h2>
 <p>The following example builds a random recurrent transformer encoder and applies
 its output as input 100 times.</p>
@@ -182,11 +198,11 @@ x0 = torch.rand(
     10,    # batch size
     12*32  # feature size
 )
-memory = None
+state = None
 
 x = x0
 for i in range(100):
-    x, memory = model(x, memory=memory)
+    x, state = model(x, state=state)
 </code></pre>
               
             </div>

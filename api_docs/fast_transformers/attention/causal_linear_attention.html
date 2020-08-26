@@ -36,7 +36,8 @@
 import torch
 from torch.nn import Module
 
-from fast_transformers.causal_product import causal_dot_product 
+from ..attention_registry import AttentionRegistry, Optional, Callable
+from ..causal_product import causal_dot_product 
 
 
 def elu_feature_map(x):
@@ -101,7 +102,15 @@ class CausalLinearAttention(Module):
             values
         )
 
-        return V * Z[:, :, :, None]</code></pre>
+        return V * Z[:, :, :, None]
+
+
+# Register the attention implementation so that it becomes available in our
+# builders
+AttentionRegistry.register(
+    &#34;causal-linear&#34;, CausalLinearAttention,
+    [(&#34;feature_map&#34;, Optional(Callable))]
+)</code></pre>
 </details>
 </section>
 <section>

@@ -6,7 +6,7 @@
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
 <title>fast_transformers.recurrent.attention API documentation</title>
 <meta name="description" content="Implementations of different types of autoregressive attention
-mechanisms." />
+mechanisms for self attention and cross attention." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -22,7 +22,7 @@ mechanisms." />
 </header>
 <section id="section-intro">
 <p>Implementations of different types of autoregressive attention
-mechanisms.</p>
+mechanisms for self attention and cross attention.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -34,30 +34,27 @@ mechanisms.</p>
 #
 
 &#34;&#34;&#34;Implementations of different types of autoregressive attention
-mechanisms.&#34;&#34;&#34;
+mechanisms for self attention and cross attention.&#34;&#34;&#34;
 
-from .attention_layer import RecurrentAttentionLayer
-from .full_attention import RecurrentFullAttention
-from .linear_attention import RecurrentLinearAttention</code></pre>
+from .self_attention.attention_layer import RecurrentAttentionLayer
+from .self_attention.full_attention import RecurrentFullAttention
+from .self_attention.linear_attention import RecurrentLinearAttention
+
+from .cross_attention.attention_layer import RecurrentCrossAttentionLayer
+from .cross_attention.full_attention import RecurrentCrossFullAttention
+from .cross_attention.linear_attention import RecurrentCrossLinearAttention</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="fast_transformers.recurrent.attention.attention_layer" href="attention_layer.html">fast_transformers.recurrent.attention.attention_layer</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.recurrent.attention.cross_attention" href="cross_attention/index.html">fast_transformers.recurrent.attention.cross_attention</a></code></dt>
 <dd>
-<section class="desc"><p>Similar to the corresponding module in fast_transformers.attention, this
-module performs all the query, key, value projections and output projections
-…</p></section>
+<section class="desc"><p>Autoregressive implementations for cross attention as a recurrent module …</p></section>
 </dd>
-<dt><code class="name"><a title="fast_transformers.recurrent.attention.full_attention" href="full_attention.html">fast_transformers.recurrent.attention.full_attention</a></code></dt>
+<dt><code class="name"><a title="fast_transformers.recurrent.attention.self_attention" href="self_attention/index.html">fast_transformers.recurrent.attention.self_attention</a></code></dt>
 <dd>
-<section class="desc"><p>Implement the typical softmax attention as a recurrent module to speed up
-autoregressive inference. See fast_transformers.attention.full_attention .</p></section>
-</dd>
-<dt><code class="name"><a title="fast_transformers.recurrent.attention.linear_attention" href="linear_attention.html">fast_transformers.recurrent.attention.linear_attention</a></code></dt>
-<dd>
-<section class="desc"><p>Implement the causally masked linear attention as a recurrent model.</p></section>
+<section class="desc"><p>Autoregressive implementations for self attention as a recurrent module …</p></section>
 </dd>
 </dl>
 </section>
@@ -81,9 +78,8 @@ autoregressive inference. See fast_transformers.attention.full_attention .</p></
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="fast_transformers.recurrent.attention.attention_layer" href="attention_layer.html">fast_transformers.recurrent.attention.attention_layer</a></code></li>
-<li><code><a title="fast_transformers.recurrent.attention.full_attention" href="full_attention.html">fast_transformers.recurrent.attention.full_attention</a></code></li>
-<li><code><a title="fast_transformers.recurrent.attention.linear_attention" href="linear_attention.html">fast_transformers.recurrent.attention.linear_attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention" href="cross_attention/index.html">fast_transformers.recurrent.attention.cross_attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.self_attention" href="self_attention/index.html">fast_transformers.recurrent.attention.self_attention</a></code></li>
 </ul>
 </li>
 </ul>

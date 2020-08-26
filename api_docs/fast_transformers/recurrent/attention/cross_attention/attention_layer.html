@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
-<title>fast_transformers.attention.attention_layer API documentation</title>
-<meta name="description" content="The base attention layer performs all the query key value projections and
-output projections leaving the implementation of the attention to the inner
+<title>fast_transformers.recurrent.attention.cross_attention.attention_layer API documentation</title>
+<meta name="description" content="Similar to the corresponding module in fast_transformers.attention, this
+module performs all the query, key, value projections and output projections
 …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -19,44 +19,44 @@ output projections leaving the implementation of the attention to the inner
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>fast_transformers.attention.attention_layer</code></h1>
+<h1 class="title">Module <code>fast_transformers.recurrent.attention.cross_attention.attention_layer</code></h1>
 </header>
 <section id="section-intro">
-<p>The base attention layer performs all the query key value projections and
-output projections leaving the implementation of the attention to the inner
-attention module.</p>
-<p>The transformer layers, however, are agnostic of the attention implementation
-and any layer that implements the same interface can substitute for the
-attention layer.</p>
+<p>Similar to the corresponding module in fast_transformers.attention, this
+module performs all the query, key, value projections and output projections
+leaving the implementation of the attention to the inner attention module.</p>
+<p>The crucial difference with respect to the self attention recurrent module
+(fast_transformers.recurrent.attention.RecurrentAttentionLayer) is that it
+doesn't recompute the projections for the keys and values if the state is not
+None.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#
 # Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
-# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;,
-# Apoorv Vyas &lt;avyas@idiap.ch&gt;
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
 #
 
-&#34;&#34;&#34;The base attention layer performs all the query key value projections and
-output projections leaving the implementation of the attention to the inner
-attention module.
+&#34;&#34;&#34;Similar to the corresponding module in fast_transformers.attention, this
+module performs all the query, key, value projections and output projections
+leaving the implementation of the attention to the inner attention module.
 
-The transformer layers, however, are agnostic of the attention implementation
-and any layer that implements the same interface can substitute for the
-attention layer.
+The crucial difference with respect to the self attention recurrent module
+(fast_transformers.recurrent.attention.RecurrentAttentionLayer) is that it
+doesn&#39;t recompute the projections for the keys and values if the state is not
+None.
 &#34;&#34;&#34;
 
 from torch.nn import Linear, Module
 
 
-class AttentionLayer(Module):
-    &#34;&#34;&#34;Implement the attention layer. Namely project the inputs to multi-head
-    queries, keys and values, call the attention implementation and then
-    reproject the output.
+class RecurrentCrossAttentionLayer(Module):
+    &#34;&#34;&#34;See fast_transformers.attention.attention_layer.AttentionLayer .
 
-    It can be thought of as a decorator (see decorator design patter) of an
-    attention layer.
+    The differences with the aforementioned module as well as the
+    RecurrentAttentionLayer are that this module projects the query every time
+    and the keys and values only the first time they are provided.
 
     Arguments
     ---------
@@ -71,7 +71,7 @@ class AttentionLayer(Module):
     &#34;&#34;&#34;
     def __init__(self, attention, d_model, n_heads, d_keys=None,
                  d_values=None):
-        super(AttentionLayer, self).__init__()
+        super(RecurrentCrossAttentionLayer, self).__init__()
 
         # Fill d_keys and d_values
         d_keys = d_keys or (d_model//n_heads)
@@ -84,56 +84,54 @@ class AttentionLayer(Module):
         self.out_projection = Linear(d_values * n_heads, d_model)
         self.n_heads = n_heads
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        &#34;&#34;&#34;Apply attention to the passed in queries/keys/values after
-        projecting them to multiple heads.
+    def forward(self, query, keys, values, key_lengths, state=None):
+        &#34;&#34;&#34;Attend to the keys and values based on the passed in query.
 
         In the argument description we make use of the following sizes
 
             - N: the batch size
-            - L: The maximum length of the queries
-            - S: The maximum length of the keys (the actual length per sequence
-              is given by the length mask)
+            - S: the sequence length of the keys and values
             - D: The input feature dimensionality passed in the constructor as
               &#39;d_model&#39;
 
-        Arguments
-        ---------
-            queries: (N, L, D) The tensor containing the queries
+        Argument
+        --------
+            query: (N, D) The tensor containing the queries
             keys: (N, S, D) The tensor containing the keys
             values: (N, S, D) The tensor containing the values
-            attn_mask: An implementation of BaseMask that encodes where each
-                       query can attend to
-            query_lengths: An implementation of  BaseMask that encodes how
-                           many queries each sequence in the batch consists of
-            key_lengths: An implementation of BaseMask that encodes how
-                         many queries each sequence in the batch consists of
-
-        Returns
-        -------
-            The new value for each query as a tensor of shape (N, L, D).
+            key_lengths: A fast_transformers.masking.BaseMask implementation
+                         that defines the length of each key/value sequence
+            state: The state varies depending on the inner attention
+                   implementation, but if it is not None then the keys and
+                   values are ignored
         &#34;&#34;&#34;
-        # Project the queries/keys/values
-        queries = self.query_projection(queries)
-        keys = self.key_projection(keys)
-        values = self.value_projection(values)
-
-        # Reshape them into many heads and compute the attention
-        N, L, D = queries.shape
-        _, S, _ = keys.shape
+        #Extract some shapes
+        N, _ = query.shape
         H = self.n_heads
-        new_values = self.inner_attention(
-            queries.view(N, L, H, -1),
-            keys.view(N, S, H, -1),
-            values.view(N, S, H, -1),
-            attn_mask,
-            query_lengths,
-            key_lengths
-        ).view(N, L, -1)
+
+        # Project the query
+        query = self.query_projection(query).view(N, H, -1)
+
+        # Project the keys and values if there is no state
+        if state is None:
+            _, S, _ = keys.shape
+            keys = self.key_projection(keys).view(N, S, H, -1)
+            values = self.value_projection(values).view(N, S, H, -1)
+        else:
+            keys = None
+            values = None
+
+        new_value, state = self.inner_attention(
+            query,
+            keys,
+            values,
+            key_lengths,
+            state=state
+        )
+        new_value = new_value.view(N, -1)
 
         # Project the output and return
-        return self.out_projection(new_values)</code></pre>
+        return self.out_projection(new_value), state</code></pre>
 </details>
 </section>
 <section>
@@ -145,16 +143,15 @@ class AttentionLayer(Module):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="fast_transformers.attention.attention_layer.AttentionLayer"><code class="flex name class">
-<span>class <span class="ident">AttentionLayer</span></span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer"><code class="flex name class">
+<span>class <span class="ident">RecurrentCrossAttentionLayer</span></span>
 <span>(</span><span>attention, d_model, n_heads, d_keys=None, d_values=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implement the attention layer. Namely project the inputs to multi-head
-queries, keys and values, call the attention implementation and then
-reproject the output.</p>
-<p>It can be thought of as a decorator (see decorator design patter) of an
-attention layer.</p>
+<section class="desc"><p>See fast_transformers.attention.attention_layer.AttentionLayer .</p>
+<p>The differences with the aforementioned module as well as the
+RecurrentAttentionLayer are that this module projects the query every time
+and the keys and values only the first time they are provided.</p>
 <h2 id="arguments">Arguments</h2>
 <pre><code>attention: Specific inner attention implementation that just computes a
            weighted average of values given a similarity of queries and
@@ -170,13 +167,12 @@ d_values: The dimensionality of the values (default: d_model/n_heads)
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class AttentionLayer(Module):
-    &#34;&#34;&#34;Implement the attention layer. Namely project the inputs to multi-head
-    queries, keys and values, call the attention implementation and then
-    reproject the output.
+<pre><code class="python">class RecurrentCrossAttentionLayer(Module):
+    &#34;&#34;&#34;See fast_transformers.attention.attention_layer.AttentionLayer .
 
-    It can be thought of as a decorator (see decorator design patter) of an
-    attention layer.
+    The differences with the aforementioned module as well as the
+    RecurrentAttentionLayer are that this module projects the query every time
+    and the keys and values only the first time they are provided.
 
     Arguments
     ---------
@@ -191,7 +187,7 @@ d_values: The dimensionality of the values (default: d_model/n_heads)
     &#34;&#34;&#34;
     def __init__(self, attention, d_model, n_heads, d_keys=None,
                  d_values=None):
-        super(AttentionLayer, self).__init__()
+        super(RecurrentCrossAttentionLayer, self).__init__()
 
         # Fill d_keys and d_values
         d_keys = d_keys or (d_model//n_heads)
@@ -204,56 +200,54 @@ d_values: The dimensionality of the values (default: d_model/n_heads)
         self.out_projection = Linear(d_values * n_heads, d_model)
         self.n_heads = n_heads
 
-    def forward(self, queries, keys, values, attn_mask, query_lengths,
-                key_lengths):
-        &#34;&#34;&#34;Apply attention to the passed in queries/keys/values after
-        projecting them to multiple heads.
+    def forward(self, query, keys, values, key_lengths, state=None):
+        &#34;&#34;&#34;Attend to the keys and values based on the passed in query.
 
         In the argument description we make use of the following sizes
 
             - N: the batch size
-            - L: The maximum length of the queries
-            - S: The maximum length of the keys (the actual length per sequence
-              is given by the length mask)
+            - S: the sequence length of the keys and values
             - D: The input feature dimensionality passed in the constructor as
               &#39;d_model&#39;
 
-        Arguments
-        ---------
-            queries: (N, L, D) The tensor containing the queries
+        Argument
+        --------
+            query: (N, D) The tensor containing the queries
             keys: (N, S, D) The tensor containing the keys
             values: (N, S, D) The tensor containing the values
-            attn_mask: An implementation of BaseMask that encodes where each
-                       query can attend to
-            query_lengths: An implementation of  BaseMask that encodes how
-                           many queries each sequence in the batch consists of
-            key_lengths: An implementation of BaseMask that encodes how
-                         many queries each sequence in the batch consists of
-
-        Returns
-        -------
-            The new value for each query as a tensor of shape (N, L, D).
+            key_lengths: A fast_transformers.masking.BaseMask implementation
+                         that defines the length of each key/value sequence
+            state: The state varies depending on the inner attention
+                   implementation, but if it is not None then the keys and
+                   values are ignored
         &#34;&#34;&#34;
-        # Project the queries/keys/values
-        queries = self.query_projection(queries)
-        keys = self.key_projection(keys)
-        values = self.value_projection(values)
-
-        # Reshape them into many heads and compute the attention
-        N, L, D = queries.shape
-        _, S, _ = keys.shape
+        #Extract some shapes
+        N, _ = query.shape
         H = self.n_heads
-        new_values = self.inner_attention(
-            queries.view(N, L, H, -1),
-            keys.view(N, S, H, -1),
-            values.view(N, S, H, -1),
-            attn_mask,
-            query_lengths,
-            key_lengths
-        ).view(N, L, -1)
+
+        # Project the query
+        query = self.query_projection(query).view(N, H, -1)
+
+        # Project the keys and values if there is no state
+        if state is None:
+            _, S, _ = keys.shape
+            keys = self.key_projection(keys).view(N, S, H, -1)
+            values = self.value_projection(values).view(N, S, H, -1)
+        else:
+            keys = None
+            values = None
+
+        new_value, state = self.inner_attention(
+            query,
+            keys,
+            values,
+            key_lengths,
+            state=state
+        )
+        new_value = new_value.view(N, -1)
 
         # Project the output and return
-        return self.out_projection(new_values)</code></pre>
+        return self.out_projection(new_value), state</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -261,88 +255,79 @@ d_values: The dimensionality of the values (default: d_model/n_heads)
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="fast_transformers.attention.attention_layer.AttentionLayer.forward"><code class="name flex">
-<span>def <span class="ident">forward</span></span>(<span>self, queries, keys, values, attn_mask, query_lengths, key_lengths)</span>
+<dt id="fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, query, keys, values, key_lengths, state=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Apply attention to the passed in queries/keys/values after
-projecting them to multiple heads.</p>
+<section class="desc"><p>Attend to the keys and values based on the passed in query.</p>
 <p>In the argument description we make use of the following sizes</p>
 <pre><code>- N: the batch size
-- L: The maximum length of the queries
-- S: The maximum length of the keys (the actual length per sequence
-  is given by the length mask)
+- S: the sequence length of the keys and values
 - D: The input feature dimensionality passed in the constructor as
   'd_model'
 </code></pre>
-<h2 id="arguments">Arguments</h2>
-<pre><code>queries: (N, L, D) The tensor containing the queries
+<h2 id="argument">Argument</h2>
+<pre><code>query: (N, D) The tensor containing the queries
 keys: (N, S, D) The tensor containing the keys
 values: (N, S, D) The tensor containing the values
-attn_mask: An implementation of BaseMask that encodes where each
-           query can attend to
-query_lengths: An implementation of  BaseMask that encodes how
-               many queries each sequence in the batch consists of
-key_lengths: An implementation of BaseMask that encodes how
-             many queries each sequence in the batch consists of
-</code></pre>
-<h2 id="returns">Returns</h2>
-<pre><code>The new value for each query as a tensor of shape (N, L, D).
+key_lengths: A fast_transformers.masking.BaseMask implementation
+             that defines the length of each key/value sequence
+state: The state varies depending on the inner attention
+       implementation, but if it is not None then the keys and
+       values are ignored
 </code></pre></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def forward(self, queries, keys, values, attn_mask, query_lengths,
-            key_lengths):
-    &#34;&#34;&#34;Apply attention to the passed in queries/keys/values after
-    projecting them to multiple heads.
+<pre><code class="python">def forward(self, query, keys, values, key_lengths, state=None):
+    &#34;&#34;&#34;Attend to the keys and values based on the passed in query.
 
     In the argument description we make use of the following sizes
 
         - N: the batch size
-        - L: The maximum length of the queries
-        - S: The maximum length of the keys (the actual length per sequence
-          is given by the length mask)
+        - S: the sequence length of the keys and values
         - D: The input feature dimensionality passed in the constructor as
           &#39;d_model&#39;
 
-    Arguments
-    ---------
-        queries: (N, L, D) The tensor containing the queries
+    Argument
+    --------
+        query: (N, D) The tensor containing the queries
         keys: (N, S, D) The tensor containing the keys
         values: (N, S, D) The tensor containing the values
-        attn_mask: An implementation of BaseMask that encodes where each
-                   query can attend to
-        query_lengths: An implementation of  BaseMask that encodes how
-                       many queries each sequence in the batch consists of
-        key_lengths: An implementation of BaseMask that encodes how
-                     many queries each sequence in the batch consists of
-
-    Returns
-    -------
-        The new value for each query as a tensor of shape (N, L, D).
+        key_lengths: A fast_transformers.masking.BaseMask implementation
+                     that defines the length of each key/value sequence
+        state: The state varies depending on the inner attention
+               implementation, but if it is not None then the keys and
+               values are ignored
     &#34;&#34;&#34;
-    # Project the queries/keys/values
-    queries = self.query_projection(queries)
-    keys = self.key_projection(keys)
-    values = self.value_projection(values)
-
-    # Reshape them into many heads and compute the attention
-    N, L, D = queries.shape
-    _, S, _ = keys.shape
+    #Extract some shapes
+    N, _ = query.shape
     H = self.n_heads
-    new_values = self.inner_attention(
-        queries.view(N, L, H, -1),
-        keys.view(N, S, H, -1),
-        values.view(N, S, H, -1),
-        attn_mask,
-        query_lengths,
-        key_lengths
-    ).view(N, L, -1)
+
+    # Project the query
+    query = self.query_projection(query).view(N, H, -1)
+
+    # Project the keys and values if there is no state
+    if state is None:
+        _, S, _ = keys.shape
+        keys = self.key_projection(keys).view(N, S, H, -1)
+        values = self.value_projection(values).view(N, S, H, -1)
+    else:
+        keys = None
+        values = None
+
+    new_value, state = self.inner_attention(
+        query,
+        keys,
+        values,
+        key_lengths,
+        state=state
+    )
+    new_value = new_value.view(N, -1)
 
     # Project the output and return
-    return self.out_projection(new_values)</code></pre>
+    return self.out_projection(new_value), state</code></pre>
 </details>
 </dd>
 </dl>
@@ -358,15 +343,15 @@ key_lengths: An implementation of BaseMask that encodes how
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="fast_transformers.attention" href="index.html">fast_transformers.attention</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention" href="index.html">fast_transformers.recurrent.attention.cross_attention</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="fast_transformers.attention.attention_layer.AttentionLayer" href="#fast_transformers.attention.attention_layer.AttentionLayer">AttentionLayer</a></code></h4>
+<h4><code><a title="fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer" href="#fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer">RecurrentCrossAttentionLayer</a></code></h4>
 <ul class="">
-<li><code><a title="fast_transformers.attention.attention_layer.AttentionLayer.forward" href="#fast_transformers.attention.attention_layer.AttentionLayer.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer.forward" href="#fast_transformers.recurrent.attention.cross_attention.attention_layer.RecurrentCrossAttentionLayer.forward">forward</a></code></li>
 </ul>
 </li>
 </ul>

@@ -39,6 +39,7 @@ attention depending on the input sequence length.&#34;&#34;&#34;
 import torch
 from torch.nn import Module
 
+from ..attention_registry import AttentionRegistry, Optional, Int, Float
 from .full_attention import FullAttention
 
 
@@ -52,12 +53,12 @@ class ConditionalFullAttention(Module):
         length_limit: An integer denoting the maximum sequence length to
                       consider.
         softmax_temp: See fast_transformers.attention.full_attention.
-        dropout_rate: See fast_transformers.attention.full_attention.
+        attention_dropout: See fast_transformers.attention.full_attention.
     &#34;&#34;&#34;
     def __init__(self, other_attention, length_limit=512, softmax_temp=None,
-                 dropout_rate=0.1):
+                 attention_dropout=0.1):
         super(ConditionalFullAttention, self).__init__()
-        self.full_attention = FullAttention(softmax_temp, dropout_rate)
+        self.full_attention = FullAttention(softmax_temp, attention_dropout)
         self.other_attention = other_attention
         self.length_limit = length_limit
 
@@ -72,7 +73,19 @@ class ConditionalFullAttention(Module):
                                         query_lengths, key_lengths)
         else:
             return self.full_attention(queries, keys, values, attn_mask,
-                                       query_lengths, key_lengths)</code></pre>
+                                       query_lengths, key_lengths)
+
+
+# Register the attention implementation so that it becomes available in our
+# builders
+AttentionRegistry.register(
+    &#34;conditional-full&#34;, ConditionalFullAttention,
+    [
+        (&#34;length_limit&#34;, Optional(Int, 512)),
+        (&#34;softmax_temp&#34;, Optional(Float)),
+        (&#34;attention_dropout&#34;, Optional(Float, 0.1))
+    ]
+)</code></pre>
 </details>
 </section>
 <section>
@@ -86,7 +99,7 @@ class ConditionalFullAttention(Module):
 <dl>
 <dt id="fast_transformers.attention.conditional_full_attention.ConditionalFullAttention"><code class="flex name class">
 <span>class <span class="ident">ConditionalFullAttention</span></span>
-<span>(</span><span>other_attention, length_limit=512, softmax_temp=None, dropout_rate=0.1)</span>
+<span>(</span><span>other_attention, length_limit=512, softmax_temp=None, attention_dropout=0.1)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>"Delegate to full attention if the input sequence is short.</p>
@@ -96,7 +109,7 @@ class ConditionalFullAttention(Module):
 length_limit: An integer denoting the maximum sequence length to
               consider.
 softmax_temp: See fast_transformers.attention.full_attention.
-dropout_rate: See fast_transformers.attention.full_attention.
+attention_dropout: See fast_transformers.attention.full_attention.
 </code></pre>
 <p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
 <details class="source">
@@ -113,12 +126,12 @@ dropout_rate: See fast_transformers.attention.full_attention.
         length_limit: An integer denoting the maximum sequence length to
                       consider.
         softmax_temp: See fast_transformers.attention.full_attention.
-        dropout_rate: See fast_transformers.attention.full_attention.
+        attention_dropout: See fast_transformers.attention.full_attention.
     &#34;&#34;&#34;
     def __init__(self, other_attention, length_limit=512, softmax_temp=None,
-                 dropout_rate=0.1):
+                 attention_dropout=0.1):
         super(ConditionalFullAttention, self).__init__()
-        self.full_attention = FullAttention(softmax_temp, dropout_rate)
+        self.full_attention = FullAttention(softmax_temp, attention_dropout)
         self.other_attention = other_attention
         self.length_limit = length_limit
 

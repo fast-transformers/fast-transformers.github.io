@@ -42,6 +42,7 @@ import torch
 from torch.nn import Dropout, Module
 from torch.nn.init import normal_
 
+from ..attention_registry import AttentionRegistry, Optional, Int, Float, Bool
 from ..masking import FullMask
 
 
@@ -58,11 +59,12 @@ class ReformerAttention(Module):
         softmax_temp: The temperature to use for the softmax attention.
                       (default: 1/sqrt(d_keys) where d_keys is computed at
                       runtime)
-        dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+        attention_dropout: The dropout rate to apply to the attention
+                           (default: 0.1)
     &#34;&#34;&#34;
 
     def __init__(self, chunk_size=32, bits=8, rounds=4, masked=False,
-                 softmax_temp=None, dropout_rate=0.1):
+                 softmax_temp=None, attention_dropout=0.1):
         super(ReformerAttention, self).__init__()
 
         self.chunk_size = chunk_size
@@ -70,7 +72,7 @@ class ReformerAttention(Module):
         self.rounds = rounds
         self.masked = masked
         self.softmax_temp = softmax_temp
-        self.dropout = Dropout(dropout_rate)
+        self.dropout = Dropout(attention_dropout)
 
     def _normalize(self, x):
         norms = torch.sqrt(torch.einsum(&#34;nlhe,nlhe-&gt;nlh&#34;, x, x))
@@ -167,7 +169,22 @@ class ReformerAttention(Module):
             V_new = V_new + \
                     factor * self._reformer_round(queries, K, values, mask, softmax_temp)
 
-        return V_new</code></pre>
+        return V_new
+
+
+# Register the attention implementation so that it becomes available in our
+# builders
+AttentionRegistry.register(
+    &#34;reformer&#34;, ReformerAttention,
+    [
+        (&#34;chunk_size&#34;, Optional(Int, 32)),
+        (&#34;bits&#34;, Optional(Int, 32)),
+        (&#34;rounds&#34;, Optional(Int, 4)),
+        (&#34;masked&#34;, Optional(Bool, False)),
+        (&#34;softmax_temp&#34;, Optional(Float)),
+        (&#34;attention_dropout&#34;, Optional(Float, 0.1))
+    ]
+)</code></pre>
 </details>
 </section>
 <section>
@@ -181,7 +198,7 @@ class ReformerAttention(Module):
 <dl>
 <dt id="fast_transformers.attention.reformer_attention.ReformerAttention"><code class="flex name class">
 <span>class <span class="ident">ReformerAttention</span></span>
-<span>(</span><span>chunk_size=32, bits=8, rounds=4, masked=False, softmax_temp=None, dropout_rate=0.1)</span>
+<span>(</span><span>chunk_size=32, bits=8, rounds=4, masked=False, softmax_temp=None, attention_dropout=0.1)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Implement the attention module of the paper "Reformer the efficient
@@ -194,7 +211,8 @@ masked      : If true, the query does not attend to itsself (default: False)
 softmax_temp: The temperature to use for the softmax attention.
               (default: 1/sqrt(d_keys) where d_keys is computed at
               runtime)
-dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+attention_dropout: The dropout rate to apply to the attention
+                   (default: 0.1)
 </code></pre>
 <p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
 <details class="source">
@@ -214,11 +232,12 @@ dropout_rate: The dropout rate to apply to the attention (default: 0.1)
         softmax_temp: The temperature to use for the softmax attention.
                       (default: 1/sqrt(d_keys) where d_keys is computed at
                       runtime)
-        dropout_rate: The dropout rate to apply to the attention (default: 0.1)
+        attention_dropout: The dropout rate to apply to the attention
+                           (default: 0.1)
     &#34;&#34;&#34;
 
     def __init__(self, chunk_size=32, bits=8, rounds=4, masked=False,
-                 softmax_temp=None, dropout_rate=0.1):
+                 softmax_temp=None, attention_dropout=0.1):
         super(ReformerAttention, self).__init__()
 
         self.chunk_size = chunk_size
@@ -226,7 +245,7 @@ dropout_rate: The dropout rate to apply to the attention (default: 0.1)
         self.rounds = rounds
         self.masked = masked
         self.softmax_temp = softmax_temp
-        self.dropout = Dropout(dropout_rate)
+        self.dropout = Dropout(attention_dropout)
 
     def _normalize(self, x):
         norms = torch.sqrt(torch.einsum(&#34;nlhe,nlhe-&gt;nlh&#34;, x, x))
