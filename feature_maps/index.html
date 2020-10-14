@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Feature Maps - Fast Transformers for PyTorch</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Feature Maps";
+    var mkdocs_page_input_path = "feature_maps.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Fast Transformers for PyTorch</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../transformers/">Transformers</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../masking/">Masking</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../attention/">Attention</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Feature Maps</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#featuremap-api">FeatureMap API</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-feature-maps">Using feature maps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#available-feature-maps">Available feature maps</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../builders/">Builders</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../custom_attention_layer/">Custom Attention Layer</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../recurrent_transformers/">Recurrent Transformers</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tips_and_tricks/">Tips and Tricks</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="/api_docs/fast_transformers/">API Docs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Fast Transformers for PyTorch</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Feature Maps</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/idiap/fast-transformers/edit/master/docs/feature_maps.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="feature-maps">Feature Maps</h1>
+<p>The <a href="/api_docs/fast_transformers/attention/linear_attention.html">LinearAttention</a> and <a href="/api_docs/fast_transformers/attention/causal_linear_attention.html">CausalLinearAttention</a> modules, as well as
+their corresponding recurrent modules, accept a <code>feature_map</code> argument which is
+the kernel feature map for each attention implementation. The default
+<code>feature_map</code> is a simple activation function as used in "<a href="https://arxiv.org/pdf/2006.16236.pdf">Transformers are
+RNNs: Fast Autoregressive Transformers with Linear Attention</a>".</p>
+<p>However, the API allows for signficantly more complicated feature maps, that
+contain trainable weights or are asymmetric.</p>
+<h2 id="featuremap-api">FeatureMap API</h2>
+<p>All feature maps must implement the following interface.</p>
+<pre><code class="python">class FeatureMap(Module):
+    def __init__(self, query_dimensions):
+        ...
+
+    def new_feature_map(self):
+        &quot;&quot;&quot;Create a new instance of this feature map. In particular, if it is a
+        random feature map sample new parameters.&quot;&quot;&quot;
+        ...
+
+    def forward_queries(self, x):
+        &quot;&quot;&quot;Encode the queries `x` using this feature map.&quot;&quot;&quot;
+        ...
+
+    def forward_keys(self, x):
+        &quot;&quot;&quot;Encode the keys `x` using this feature map.&quot;&quot;&quot;
+        ...
+
+    def forward(self, x):
+        # For symmetric feature maps it suffices to define this function
+        ...
+</code></pre>
+
+<p>In particular, all feature maps accept the <strong>query dimensions</strong> as the first
+constructor parameter. After calling <strong>new_feature_map()</strong> all calls to
+<strong>forward</strong> variants should be compatible with each other, namely all
+randomness should happen in the <strong>new_feature_map</strong> method. Symmetric feature
+maps should only implement <strong>forward</strong>.</p>
+<h2 id="using-feature-maps">Using feature maps</h2>
+<p>All modules that accept feature maps, expect a <strong>factory</strong> function. Namely, a
+function that when given the query dimensions returns a new feature map
+instance.</p>
+<p>A simple way to achieve that is by using the <code>partial()</code> method of the built-in
+module <code>functools</code> or the utility class method <code>factory()</code> which is basically
+the same.</p>
+<pre><code class="python">from functools import partial
+
+from fast_transformers.builders import TransformerEncoderBuilder
+from fast_transformers.feature_maps import Favor
+
+transformer = TransformerEncoderBuilder.from_kwargs(
+    attention_type=&quot;linear&quot;,
+    n_layers=4,
+    n_heads=8,
+    query_dimensions=32,
+    feature_map=Favor.factory(n_dims=256)
+).get()
+
+transformer = TransformerEncoderBuilder.from_kwargs(
+    attention_type=&quot;linear&quot;,
+    n_layers=4,
+    n_heads=8,
+    query_dimensions=32,
+    feature_map=partial(Favor, n_dims=256)
+).get()
+
+</code></pre>
+
+<p>If you do not want to pass any parameters to the feature map, then it suffices
+to use the class object directly.</p>
+<h2 id="available-feature-maps">Available feature maps</h2>
+<ul>
+<li><a href="/api_docs/fast_transformers/feature_maps/base.html#fast_transformers.feature_maps.base.ActivationFunctionFeatureMap">ActivationFunctionFeatureMap</a> uses a simple elementwise activation
+  function as a feature map.</li>
+<li><strong>elu_feature_map</strong> is a specialization of the above where the activation
+  function is <code>elu(x)+1</code>. It is also the default feature map.</li>
+<li><a href="/api_docs/fast_transformers/feature_maps/fourier_features.html#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a> approximates the RBF kernel using random Fourier
+  features with trigonometric functions.</li>
+<li><a href="/api_docs/fast_transformers/feature_maps/fourier_features.html#fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures">SmoothedRandomFourierFeatures</a> approximates the RBF kernel plus a
+  constant for numerical stability.</li>
+<li><a href="/api_docs/fast_transformers/feature_maps/fourier_features.html#fast_transformers.feature_maps.fourier_features.Favor">Favor</a> implements the positive random features designed specifically for
+  transformers in the paper "<a href="https://arxiv.org/abs/2009.14794">Rethinking Attention with Performers</a>". It
+  should be preferred over the RandomFourierFeatures.</li>
+<li><a href="/api_docs/fast_transformers/feature_maps/fourier_features.html#fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures">GeneralizedRandomFeatures</a> is a simplification of Favor which does not
+  approximate softmax but it can increase the rank of the resulting attention
+  matrix.</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../builders/" class="btn btn-neutral float-right" title="Builders">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../attention/" class="btn btn-neutral" title="Attention"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/idiap/fast-transformers/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../attention/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../builders/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
+<title>fast_transformers.builders.transformer_builders API documentation</title>
+<meta name="description" content="Build complex transformer architectures for inference or training easily." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>fast_transformers.builders.transformer_builders</code></h1>
+</header>
+<section id="section-intro">
+<p>Build complex transformer architectures for inference or training easily.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
+#
+
+&#34;&#34;&#34;Build complex transformer architectures for inference or training easily.&#34;&#34;&#34;
+
+from torch.nn import LayerNorm
+
+from ..attention import AttentionLayer
+from ..transformers import TransformerEncoder, TransformerEncoderLayer, \
+    TransformerDecoder, TransformerDecoderLayer
+from ..recurrent.attention import \
+    RecurrentAttentionLayer, \
+    RecurrentCrossAttentionLayer
+from ..recurrent.transformers import \
+    RecurrentTransformerEncoder, RecurrentTransformerEncoderLayer, \
+    RecurrentTransformerDecoder, RecurrentTransformerDecoderLayer
+from .base import BaseBuilder
+from .attention_builders import AttentionBuilder, RecurrentAttentionBuilder, \
+    RecurrentCrossAttentionBuilder
+
+
+class BaseTransformerBuilder(BaseBuilder):
+    &#34;&#34;&#34;Contains all the parameters for building a transformer other than the
+    attention part.
+
+    Classes extending the BaseTransformerBuilder should implement the `get()`
+    method that actually builds the transformer.
+    &#34;&#34;&#34;
+    def __init__(self):
+        # transformer parameters
+        self._n_layers = 4
+        self._n_heads = 4
+        self._d_query = 64
+        self._d_value = 64
+        self._d_ff = 1024
+        self._dropout = 0.1
+        self._activation = &#34;relu&#34;
+        self._final_norm = True
+        self._event_dispatcher = &#34;&#34;  # the default global dispatcher
+
+    @property
+    def n_layers(self):
+        &#34;&#34;&#34;The number of transformer layers.&#34;&#34;&#34;
+        return self._n_layers
+
+    @n_layers.setter
+    def n_layers(self, val):
+        self._n_layers = val
+
+    @property
+    def n_heads(self):
+        &#34;&#34;&#34;The number of heads in each transformer layer.&#34;&#34;&#34;
+        return self._n_heads
+
+    @n_heads.setter
+    def n_heads(self, val):
+        self._n_heads = val
+
+    @property
+    def feed_forward_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the fully connected layer in the transformer
+        layers.&#34;&#34;&#34;
+        return self._d_ff
+
+    @feed_forward_dimensions.setter
+    def feed_forward_dimensions(self, val):
+        self._d_ff = val
+
+    @property
+    def query_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the queries and keys in each attention layer.&#34;&#34;&#34;
+        return self._d_query
+
+    @query_dimensions.setter
+    def query_dimensions(self, val):
+        self._d_query = val
+
+    @property
+    def value_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the values in each attention layer.&#34;&#34;&#34;
+        return self._d_value
+
+    @value_dimensions.setter
+    def value_dimensions(self, val):
+        self._d_value = val
+
+    @property
+    def dropout(self):
+        &#34;&#34;&#34;The dropout rate to be applied in the transformer encoder layer.&#34;&#34;&#34;
+        return self._dropout
+
+    @dropout.setter
+    def dropout(self, val):
+        self._dropout = val
+
+    @property
+    def activation(self):
+        &#34;&#34;&#34;The activation function for the transformer layer.
+
+        One of {&#39;relu&#39;, &#39;gelu&#39;}.
+        &#34;&#34;&#34;
+        return self._activation
+
+    @activation.setter
+    def activation(self, val):
+        activations = [&#34;relu&#34;, &#34;gelu&#34;]
+        if val not in activations:
+            raise ValueError((&#34;{!r} is not one of the availabel activation &#34;
+                              &#34;types {!r}&#34;).format(val, activations))
+        self._activation = val
+
+    @property
+    def final_normalization(self):
+        &#34;&#34;&#34;Whether to add LayerNorm as the final layer of the
+        TransformerEncoder.&#34;&#34;&#34;
+        return self._final_norm
+
+    @final_normalization.setter
+    def final_normalization(self, val):
+        self._final_norm = bool(val)
+
+    @property
+    def event_dispatcher(self):
+        &#34;&#34;&#34;The transformer event dispatcher either as a string or as an
+        EventDispatcher object.&#34;&#34;&#34;
+        return self._event_dispatcher
+
+    @event_dispatcher.setter
+    def event_dispatcher(self, event_dispatcher):
+        self._event_dispatcher = event_dispatcher
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+
+class BaseTransformerEncoderBuilder(BaseTransformerBuilder):
+    &#34;&#34;&#34;Implement the logic of building a transformer encoder but leave the
+    specific layers open for changing by the inheriting classes. This allows us
+    to reuse the logic for creating both the TransformerEncoder and the
+    RecurrentTransformerEncoder.
+
+    Inheriting classes should implement the following:
+
+    - _get_attention_builder()
+    - _get_attention_layer_class()
+    - _get_encoder_class()
+    - _get_encoder_layer_class()
+    &#34;&#34;&#34;
+    def __init__(self):
+        super(BaseTransformerEncoderBuilder, self).__init__()
+        self._attention_builder = self._get_attention_builder()
+        self._attention_type = &#34;full&#34;
+
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of the appropriate attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the layer that projects queries keys and
+        values.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @property
+    def attention(self):
+        &#34;&#34;&#34;The attention builder instance.&#34;&#34;&#34;
+        return self._attention_builder
+
+    @property
+    def attention_type(self):
+        &#34;&#34;&#34;The attention implementation chosen.&#34;&#34;&#34;
+        return self._attention_type
+
+    @attention_type.setter
+    def attention_type(self, val):
+        if not self._attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available attention &#34;
+                              &#34;type&#34;).format(val))
+        self._attention_type = val
+
+    def __setattr__(self, key, val):
+        # &#34;protected&#34; attributes are settable (probably from withing the class)
+        if key[0] == &#34;_&#34;:
+            return super().__setattr__(key, val)
+
+        # Existing attributes are settable but they might also be attention
+        # parameters so try that as well
+        fail_on_exception = True
+        if hasattr(self, key):
+            super().__setattr__(key, val)
+            fail_on_exception = False
+
+        # Non-existing &#34;public&#34; attributes may be attention parameters
+        try:
+            setattr(self._attention_builder, key, val)
+        except:
+            if fail_on_exception:
+                raise
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        # Set the event dispatcher to the attention builder
+        self.attention.event_dispatcher = self.event_dispatcher
+
+        # Extract into local variables the classes to be used
+        Encoder = self._get_encoder_class()
+        EncoderLayer = self._get_encoder_layer_class()
+        Attention = self._get_attention_layer_class()
+
+        model_dimensions = self.value_dimensions*self.n_heads
+        return Encoder(
+            [
+                EncoderLayer(
+                    Attention(
+                        self.attention.get(self.attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    model_dimensions,
+                    self.feed_forward_dimensions,
+                    self.dropout,
+                    self.activation,
+                    event_dispatcher=self.event_dispatcher
+                )
+                for _ in range(self.n_layers)
+            ],
+            (LayerNorm(model_dimensions) if self.final_normalization else None),
+            event_dispatcher=self.event_dispatcher
+        )
+
+
+class TransformerEncoderBuilder(BaseTransformerEncoderBuilder):
+    &#34;&#34;&#34;Build a batch transformer encoder for training or processing of
+    sequences all elements at a time.
+
+    Example usage:
+
+        builder = TransformerEncoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.attention_type = &#34;linear&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of the appropriate attention builder.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the layer that projects queries keys and
+        values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder.&#34;&#34;&#34;
+        return TransformerEncoder
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder layer.&#34;&#34;&#34;
+        return TransformerEncoderLayer
+
+
+class RecurrentEncoderBuilder(BaseTransformerEncoderBuilder):
+    &#34;&#34;&#34;Build a transformer encoder for autoregressive processing of sequences.
+
+    Example usage:
+
+        builder = RecurrentEncoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.attention_type = &#34;linear&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for recurrent attention.&#34;&#34;&#34;
+        return RecurrentAttentionBuilder()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent layer that projects queries keys
+        and values.&#34;&#34;&#34;
+        return RecurrentAttentionLayer
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent transformer encoder.&#34;&#34;&#34;
+        return RecurrentTransformerEncoder
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent transformer encoder layer.&#34;&#34;&#34;
+        return RecurrentTransformerEncoderLayer
+
+
+class BaseTransformerDecoderBuilder(BaseTransformerBuilder):
+    &#34;&#34;&#34;Similar to BaseTransformerEncoderBuilder implement the logic of
+    building the transformer decoder without defining concrete layers.
+
+    Inheriting classes should implement the following:
+
+    - _get_self_attention_builder() and _get_cross_attention_builder()
+    - _get_self_attention_layer_class() and _get_cross_attention_layer_class()
+    - _get_decoder_class()
+    - _get_decoder_layer_class()
+    &#34;&#34;&#34;
+    def __init__(self):
+        super(BaseTransformerDecoderBuilder, self).__init__()
+        self._self_attention_builder = self._get_self_attention_builder()
+        self._cross_attention_builder = self._get_cross_attention_builder()
+        self._self_attention_type = &#34;full&#34;
+        self._cross_attention_type = &#34;full&#34;
+
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return a class to project the queries, keys and values to
+        multi-head versions.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return a class to project the queries, keys and values to
+        multi-head versions.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer decoder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer decoder layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @property
+    def self_attention(self):
+        &#34;&#34;&#34;The attention builder instance that will be used for the self
+        attention modules.&#34;&#34;&#34;
+        return self._self_attention_builder
+
+    @property
+    def self_attention_type(self):
+        &#34;&#34;&#34;The attention implementation used for self attention.&#34;&#34;&#34;
+        return self._self_attention_type
+
+    @self_attention_type.setter
+    def self_attention_type(self, val):
+        if not self._self_attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available self attention &#34;
+                              &#34;type&#34;).format(val))
+        self._self_attention_type = val
+
+    @property
+    def cross_attention(self):
+        &#34;&#34;&#34;The attention builder instance that will be used for the cross
+        attention modules.&#34;&#34;&#34;
+        return self._cross_attention_builder
+
+    @property
+    def cross_attention_type(self):
+        &#34;&#34;&#34;The attention implementation used for cross attention.&#34;&#34;&#34;
+        return self._cross_attention_type
+
+    @cross_attention_type.setter
+    def cross_attention_type(self, val):
+        if not self._cross_attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available cross attention &#34;
+                              &#34;type&#34;).format(val))
+        self._cross_attention_type = val
+
+    def __setattr__(self, key, val):
+        # &#34;protected&#34; attributes are settable (probably from withing the class)
+        if key[0] == &#34;_&#34;:
+            return super().__setattr__(key, val)
+
+        # Existing attributes are settable but they might also be attention
+        # parameters so try that as well
+        fail_on_exception = True
+        if hasattr(self, key):
+            super().__setattr__(key, val)
+            fail_on_exception = False
+
+        # Non-existing &#34;public&#34; attributes may be attention parameters
+        try:
+            setattr(self._self_attention_builder, key, val)
+            setattr(self._cross_attention_builder, key, val)
+        except:
+            if fail_on_exception:
+                raise
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        # Set the event dispatcher to attention builders
+        self.self_attention.event_dispatcher = self.event_dispatcher
+        self.cross_attention.event_dispatcher = self.event_dispatcher
+
+        # Extract into local variables the classes to be used
+        Decoder = self._get_decoder_class()
+        DecoderLayer = self._get_decoder_layer_class()
+        SelfAttention = self._get_self_attention_layer_class()
+        CrossAttention = self._get_cross_attention_layer_class()
+
+        model_dimensions = self.value_dimensions*self.n_heads
+        return Decoder(
+            [
+                DecoderLayer(
+                    SelfAttention(
+                        self.self_attention.get(self.self_attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    CrossAttention(
+                        self.cross_attention.get(self.cross_attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    model_dimensions,
+                    self.feed_forward_dimensions,
+                    self.dropout,
+                    self.activation,
+                    event_dispatcher=self.event_dispatcher
+                )
+                for _ in range(self.n_layers)
+            ],
+            (LayerNorm(model_dimensions) if self.final_normalization else None),
+            event_dispatcher=self.event_dispatcher
+        )
+
+
+class TransformerDecoderBuilder(BaseTransformerDecoderBuilder):
+    &#34;&#34;&#34;Build a transformer decoder for training or processing of sequences all
+    elements at a time.
+
+    Example usage:
+
+        builder = TransformerDecoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.self_attention_type = &#34;full&#34;
+        builder.cross_attention_type = &#34;full&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the transformer decoder class.&#34;&#34;&#34;
+        return TransformerDecoder
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the transformer decoder layer class.&#34;&#34;&#34;
+        return TransformerDecoderLayer
+
+
+class RecurrentDecoderBuilder(BaseTransformerDecoderBuilder):
+    &#34;&#34;&#34;Build a transformer decoder for processing of sequences in
+    autoregressive fashion.
+
+    Example usage:
+
+        builder = RecurrentDecoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.self_attention_type = &#34;full&#34;
+        builder.cross_attention_type = &#34;full&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return RecurrentAttentionBuilder()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return RecurrentCrossAttentionBuilder()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return RecurrentAttentionLayer
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return RecurrentCrossAttentionLayer
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the transformer decoder class.&#34;&#34;&#34;
+        return RecurrentTransformerDecoder
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the transformer decoder layer class.&#34;&#34;&#34;
+        return RecurrentTransformerDecoderLayer</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder"><code class="flex name class">
+<span>class <span class="ident">BaseTransformerBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Contains all the parameters for building a transformer other than the
+attention part.</p>
+<p>Classes extending the BaseTransformerBuilder should implement the <code>get()</code>
+method that actually builds the transformer.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseTransformerBuilder(BaseBuilder):
+    &#34;&#34;&#34;Contains all the parameters for building a transformer other than the
+    attention part.
+
+    Classes extending the BaseTransformerBuilder should implement the `get()`
+    method that actually builds the transformer.
+    &#34;&#34;&#34;
+    def __init__(self):
+        # transformer parameters
+        self._n_layers = 4
+        self._n_heads = 4
+        self._d_query = 64
+        self._d_value = 64
+        self._d_ff = 1024
+        self._dropout = 0.1
+        self._activation = &#34;relu&#34;
+        self._final_norm = True
+        self._event_dispatcher = &#34;&#34;  # the default global dispatcher
+
+    @property
+    def n_layers(self):
+        &#34;&#34;&#34;The number of transformer layers.&#34;&#34;&#34;
+        return self._n_layers
+
+    @n_layers.setter
+    def n_layers(self, val):
+        self._n_layers = val
+
+    @property
+    def n_heads(self):
+        &#34;&#34;&#34;The number of heads in each transformer layer.&#34;&#34;&#34;
+        return self._n_heads
+
+    @n_heads.setter
+    def n_heads(self, val):
+        self._n_heads = val
+
+    @property
+    def feed_forward_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the fully connected layer in the transformer
+        layers.&#34;&#34;&#34;
+        return self._d_ff
+
+    @feed_forward_dimensions.setter
+    def feed_forward_dimensions(self, val):
+        self._d_ff = val
+
+    @property
+    def query_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the queries and keys in each attention layer.&#34;&#34;&#34;
+        return self._d_query
+
+    @query_dimensions.setter
+    def query_dimensions(self, val):
+        self._d_query = val
+
+    @property
+    def value_dimensions(self):
+        &#34;&#34;&#34;The dimensions of the values in each attention layer.&#34;&#34;&#34;
+        return self._d_value
+
+    @value_dimensions.setter
+    def value_dimensions(self, val):
+        self._d_value = val
+
+    @property
+    def dropout(self):
+        &#34;&#34;&#34;The dropout rate to be applied in the transformer encoder layer.&#34;&#34;&#34;
+        return self._dropout
+
+    @dropout.setter
+    def dropout(self, val):
+        self._dropout = val
+
+    @property
+    def activation(self):
+        &#34;&#34;&#34;The activation function for the transformer layer.
+
+        One of {&#39;relu&#39;, &#39;gelu&#39;}.
+        &#34;&#34;&#34;
+        return self._activation
+
+    @activation.setter
+    def activation(self, val):
+        activations = [&#34;relu&#34;, &#34;gelu&#34;]
+        if val not in activations:
+            raise ValueError((&#34;{!r} is not one of the availabel activation &#34;
+                              &#34;types {!r}&#34;).format(val, activations))
+        self._activation = val
+
+    @property
+    def final_normalization(self):
+        &#34;&#34;&#34;Whether to add LayerNorm as the final layer of the
+        TransformerEncoder.&#34;&#34;&#34;
+        return self._final_norm
+
+    @final_normalization.setter
+    def final_normalization(self, val):
+        self._final_norm = bool(val)
+
+    @property
+    def event_dispatcher(self):
+        &#34;&#34;&#34;The transformer event dispatcher either as a string or as an
+        EventDispatcher object.&#34;&#34;&#34;
+        return self._event_dispatcher
+
+    @event_dispatcher.setter
+    def event_dispatcher(self, event_dispatcher):
+        self._event_dispatcher = event_dispatcher
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        raise NotImplementedError()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation"><code class="name">var <span class="ident">activation</span></code></dt>
+<dd>
+<section class="desc"><p>The activation function for the transformer layer.</p>
+<p>One of {'relu', 'gelu'}.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def activation(self):
+    &#34;&#34;&#34;The activation function for the transformer layer.
+
+    One of {&#39;relu&#39;, &#39;gelu&#39;}.
+    &#34;&#34;&#34;
+    return self._activation</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout"><code class="name">var <span class="ident">dropout</span></code></dt>
+<dd>
+<section class="desc"><p>The dropout rate to be applied in the transformer encoder layer.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dropout(self):
+    &#34;&#34;&#34;The dropout rate to be applied in the transformer encoder layer.&#34;&#34;&#34;
+    return self._dropout</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher"><code class="name">var <span class="ident">event_dispatcher</span></code></dt>
+<dd>
+<section class="desc"><p>The transformer event dispatcher either as a string or as an
+EventDispatcher object.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def event_dispatcher(self):
+    &#34;&#34;&#34;The transformer event dispatcher either as a string or as an
+    EventDispatcher object.&#34;&#34;&#34;
+    return self._event_dispatcher</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions"><code class="name">var <span class="ident">feed_forward_dimensions</span></code></dt>
+<dd>
+<section class="desc"><p>The dimensions of the fully connected layer in the transformer
+layers.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def feed_forward_dimensions(self):
+    &#34;&#34;&#34;The dimensions of the fully connected layer in the transformer
+    layers.&#34;&#34;&#34;
+    return self._d_ff</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization"><code class="name">var <span class="ident">final_normalization</span></code></dt>
+<dd>
+<section class="desc"><p>Whether to add LayerNorm as the final layer of the
+TransformerEncoder.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def final_normalization(self):
+    &#34;&#34;&#34;Whether to add LayerNorm as the final layer of the
+    TransformerEncoder.&#34;&#34;&#34;
+    return self._final_norm</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads"><code class="name">var <span class="ident">n_heads</span></code></dt>
+<dd>
+<section class="desc"><p>The number of heads in each transformer layer.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def n_heads(self):
+    &#34;&#34;&#34;The number of heads in each transformer layer.&#34;&#34;&#34;
+    return self._n_heads</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers"><code class="name">var <span class="ident">n_layers</span></code></dt>
+<dd>
+<section class="desc"><p>The number of transformer layers.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def n_layers(self):
+    &#34;&#34;&#34;The number of transformer layers.&#34;&#34;&#34;
+    return self._n_layers</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions"><code class="name">var <span class="ident">query_dimensions</span></code></dt>
+<dd>
+<section class="desc"><p>The dimensions of the queries and keys in each attention layer.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def query_dimensions(self):
+    &#34;&#34;&#34;The dimensions of the queries and keys in each attention layer.&#34;&#34;&#34;
+    return self._d_query</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions"><code class="name">var <span class="ident">value_dimensions</span></code></dt>
+<dd>
+<section class="desc"><p>The dimensions of the values in each attention layer.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def value_dimensions(self):
+    &#34;&#34;&#34;The dimensions of the values in each attention layer.&#34;&#34;&#34;
+    return self._d_value</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build the transformer and return it.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self):
+    &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.base.BaseBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder"><code class="flex name class">
+<span>class <span class="ident">BaseTransformerDecoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Similar to BaseTransformerEncoderBuilder implement the logic of
+building the transformer decoder without defining concrete layers.</p>
+<p>Inheriting classes should implement the following:</p>
+<ul>
+<li>_get_self_attention_builder() and _get_cross_attention_builder()</li>
+<li>_get_self_attention_layer_class() and _get_cross_attention_layer_class()</li>
+<li>_get_decoder_class()</li>
+<li>_get_decoder_layer_class()</li>
+</ul></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseTransformerDecoderBuilder(BaseTransformerBuilder):
+    &#34;&#34;&#34;Similar to BaseTransformerEncoderBuilder implement the logic of
+    building the transformer decoder without defining concrete layers.
+
+    Inheriting classes should implement the following:
+
+    - _get_self_attention_builder() and _get_cross_attention_builder()
+    - _get_self_attention_layer_class() and _get_cross_attention_layer_class()
+    - _get_decoder_class()
+    - _get_decoder_layer_class()
+    &#34;&#34;&#34;
+    def __init__(self):
+        super(BaseTransformerDecoderBuilder, self).__init__()
+        self._self_attention_builder = self._get_self_attention_builder()
+        self._cross_attention_builder = self._get_cross_attention_builder()
+        self._self_attention_type = &#34;full&#34;
+        self._cross_attention_type = &#34;full&#34;
+
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return a class to project the queries, keys and values to
+        multi-head versions.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return a class to project the queries, keys and values to
+        multi-head versions.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer decoder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer decoder layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @property
+    def self_attention(self):
+        &#34;&#34;&#34;The attention builder instance that will be used for the self
+        attention modules.&#34;&#34;&#34;
+        return self._self_attention_builder
+
+    @property
+    def self_attention_type(self):
+        &#34;&#34;&#34;The attention implementation used for self attention.&#34;&#34;&#34;
+        return self._self_attention_type
+
+    @self_attention_type.setter
+    def self_attention_type(self, val):
+        if not self._self_attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available self attention &#34;
+                              &#34;type&#34;).format(val))
+        self._self_attention_type = val
+
+    @property
+    def cross_attention(self):
+        &#34;&#34;&#34;The attention builder instance that will be used for the cross
+        attention modules.&#34;&#34;&#34;
+        return self._cross_attention_builder
+
+    @property
+    def cross_attention_type(self):
+        &#34;&#34;&#34;The attention implementation used for cross attention.&#34;&#34;&#34;
+        return self._cross_attention_type
+
+    @cross_attention_type.setter
+    def cross_attention_type(self, val):
+        if not self._cross_attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available cross attention &#34;
+                              &#34;type&#34;).format(val))
+        self._cross_attention_type = val
+
+    def __setattr__(self, key, val):
+        # &#34;protected&#34; attributes are settable (probably from withing the class)
+        if key[0] == &#34;_&#34;:
+            return super().__setattr__(key, val)
+
+        # Existing attributes are settable but they might also be attention
+        # parameters so try that as well
+        fail_on_exception = True
+        if hasattr(self, key):
+            super().__setattr__(key, val)
+            fail_on_exception = False
+
+        # Non-existing &#34;public&#34; attributes may be attention parameters
+        try:
+            setattr(self._self_attention_builder, key, val)
+            setattr(self._cross_attention_builder, key, val)
+        except:
+            if fail_on_exception:
+                raise
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        # Set the event dispatcher to attention builders
+        self.self_attention.event_dispatcher = self.event_dispatcher
+        self.cross_attention.event_dispatcher = self.event_dispatcher
+
+        # Extract into local variables the classes to be used
+        Decoder = self._get_decoder_class()
+        DecoderLayer = self._get_decoder_layer_class()
+        SelfAttention = self._get_self_attention_layer_class()
+        CrossAttention = self._get_cross_attention_layer_class()
+
+        model_dimensions = self.value_dimensions*self.n_heads
+        return Decoder(
+            [
+                DecoderLayer(
+                    SelfAttention(
+                        self.self_attention.get(self.self_attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    CrossAttention(
+                        self.cross_attention.get(self.cross_attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    model_dimensions,
+                    self.feed_forward_dimensions,
+                    self.dropout,
+                    self.activation,
+                    event_dispatcher=self.event_dispatcher
+                )
+                for _ in range(self.n_layers)
+            ],
+            (LayerNorm(model_dimensions) if self.final_normalization else None),
+            event_dispatcher=self.event_dispatcher
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.RecurrentDecoderBuilder" href="#fast_transformers.builders.transformer_builders.RecurrentDecoderBuilder">RecurrentDecoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.TransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.TransformerDecoderBuilder">TransformerDecoderBuilder</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention"><code class="name">var <span class="ident">cross_attention</span></code></dt>
+<dd>
+<section class="desc"><p>The attention builder instance that will be used for the cross
+attention modules.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def cross_attention(self):
+    &#34;&#34;&#34;The attention builder instance that will be used for the cross
+    attention modules.&#34;&#34;&#34;
+    return self._cross_attention_builder</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type"><code class="name">var <span class="ident">cross_attention_type</span></code></dt>
+<dd>
+<section class="desc"><p>The attention implementation used for cross attention.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def cross_attention_type(self):
+    &#34;&#34;&#34;The attention implementation used for cross attention.&#34;&#34;&#34;
+    return self._cross_attention_type</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention"><code class="name">var <span class="ident">self_attention</span></code></dt>
+<dd>
+<section class="desc"><p>The attention builder instance that will be used for the self
+attention modules.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def self_attention(self):
+    &#34;&#34;&#34;The attention builder instance that will be used for the self
+    attention modules.&#34;&#34;&#34;
+    return self._self_attention_builder</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type"><code class="name">var <span class="ident">self_attention_type</span></code></dt>
+<dd>
+<section class="desc"><p>The attention implementation used for self attention.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def self_attention_type(self):
+    &#34;&#34;&#34;The attention implementation used for self attention.&#34;&#34;&#34;
+    return self._self_attention_type</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder"><code class="flex name class">
+<span>class <span class="ident">BaseTransformerEncoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Implement the logic of building a transformer encoder but leave the
+specific layers open for changing by the inheriting classes. This allows us
+to reuse the logic for creating both the TransformerEncoder and the
+RecurrentTransformerEncoder.</p>
+<p>Inheriting classes should implement the following:</p>
+<ul>
+<li>_get_attention_builder()</li>
+<li>_get_attention_layer_class()</li>
+<li>_get_encoder_class()</li>
+<li>_get_encoder_layer_class()</li>
+</ul></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseTransformerEncoderBuilder(BaseTransformerBuilder):
+    &#34;&#34;&#34;Implement the logic of building a transformer encoder but leave the
+    specific layers open for changing by the inheriting classes. This allows us
+    to reuse the logic for creating both the TransformerEncoder and the
+    RecurrentTransformerEncoder.
+
+    Inheriting classes should implement the following:
+
+    - _get_attention_builder()
+    - _get_attention_layer_class()
+    - _get_encoder_class()
+    - _get_encoder_layer_class()
+    &#34;&#34;&#34;
+    def __init__(self):
+        super(BaseTransformerEncoderBuilder, self).__init__()
+        self._attention_builder = self._get_attention_builder()
+        self._attention_type = &#34;full&#34;
+
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of the appropriate attention builder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the layer that projects queries keys and
+        values.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @property
+    def attention(self):
+        &#34;&#34;&#34;The attention builder instance.&#34;&#34;&#34;
+        return self._attention_builder
+
+    @property
+    def attention_type(self):
+        &#34;&#34;&#34;The attention implementation chosen.&#34;&#34;&#34;
+        return self._attention_type
+
+    @attention_type.setter
+    def attention_type(self, val):
+        if not self._attention_builder.validate_attention_type(val):
+            raise ValueError((&#34;{!r} is not an available attention &#34;
+                              &#34;type&#34;).format(val))
+        self._attention_type = val
+
+    def __setattr__(self, key, val):
+        # &#34;protected&#34; attributes are settable (probably from withing the class)
+        if key[0] == &#34;_&#34;:
+            return super().__setattr__(key, val)
+
+        # Existing attributes are settable but they might also be attention
+        # parameters so try that as well
+        fail_on_exception = True
+        if hasattr(self, key):
+            super().__setattr__(key, val)
+            fail_on_exception = False
+
+        # Non-existing &#34;public&#34; attributes may be attention parameters
+        try:
+            setattr(self._attention_builder, key, val)
+        except:
+            if fail_on_exception:
+                raise
+
+    def get(self):
+        &#34;&#34;&#34;Build the transformer and return it.&#34;&#34;&#34;
+        # Set the event dispatcher to the attention builder
+        self.attention.event_dispatcher = self.event_dispatcher
+
+        # Extract into local variables the classes to be used
+        Encoder = self._get_encoder_class()
+        EncoderLayer = self._get_encoder_layer_class()
+        Attention = self._get_attention_layer_class()
+
+        model_dimensions = self.value_dimensions*self.n_heads
+        return Encoder(
+            [
+                EncoderLayer(
+                    Attention(
+                        self.attention.get(self.attention_type),
+                        model_dimensions,
+                        self.n_heads,
+                        d_keys=self.query_dimensions,
+                        d_values=self.value_dimensions,
+                        event_dispatcher=self.event_dispatcher
+                    ),
+                    model_dimensions,
+                    self.feed_forward_dimensions,
+                    self.dropout,
+                    self.activation,
+                    event_dispatcher=self.event_dispatcher
+                )
+                for _ in range(self.n_layers)
+            ],
+            (LayerNorm(model_dimensions) if self.final_normalization else None),
+            event_dispatcher=self.event_dispatcher
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.RecurrentEncoderBuilder" href="#fast_transformers.builders.transformer_builders.RecurrentEncoderBuilder">RecurrentEncoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.TransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.TransformerEncoderBuilder">TransformerEncoderBuilder</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention"><code class="name">var <span class="ident">attention</span></code></dt>
+<dd>
+<section class="desc"><p>The attention builder instance.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def attention(self):
+    &#34;&#34;&#34;The attention builder instance.&#34;&#34;&#34;
+    return self._attention_builder</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type"><code class="name">var <span class="ident">attention_type</span></code></dt>
+<dd>
+<section class="desc"><p>The attention implementation chosen.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def attention_type(self):
+    &#34;&#34;&#34;The attention implementation chosen.&#34;&#34;&#34;
+    return self._attention_type</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.RecurrentDecoderBuilder"><code class="flex name class">
+<span>class <span class="ident">RecurrentDecoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build a transformer decoder for processing of sequences in
+autoregressive fashion.</p>
+<p>Example usage:</p>
+<pre><code>builder = RecurrentDecoderBuilder()
+builder.n_layers = 12
+builder.n_heads = 8
+builder.feed_forward_dimensions = 1024
+builder.query_dimensions = 64
+builder.value_dimensions = 64
+builder.dropout = 0.1
+builder.attention_dropout = 0.1
+builder.self_attention_type = "full"
+builder.cross_attention_type = "full"
+transformer = builder.get()
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RecurrentDecoderBuilder(BaseTransformerDecoderBuilder):
+    &#34;&#34;&#34;Build a transformer decoder for processing of sequences in
+    autoregressive fashion.
+
+    Example usage:
+
+        builder = RecurrentDecoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.self_attention_type = &#34;full&#34;
+        builder.cross_attention_type = &#34;full&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return RecurrentAttentionBuilder()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return RecurrentCrossAttentionBuilder()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return RecurrentAttentionLayer
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return RecurrentCrossAttentionLayer
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the transformer decoder class.&#34;&#34;&#34;
+        return RecurrentTransformerDecoder
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the transformer decoder layer class.&#34;&#34;&#34;
+        return RecurrentTransformerDecoderLayer</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention">cross_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type">cross_attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention">self_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type">self_attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.RecurrentEncoderBuilder"><code class="flex name class">
+<span>class <span class="ident">RecurrentEncoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build a transformer encoder for autoregressive processing of sequences.</p>
+<p>Example usage:</p>
+<pre><code>builder = RecurrentEncoderBuilder()
+builder.n_layers = 12
+builder.n_heads = 8
+builder.feed_forward_dimensions = 1024
+builder.query_dimensions = 64
+builder.value_dimensions = 64
+builder.dropout = 0.1
+builder.attention_dropout = 0.1
+builder.attention_type = "linear"
+transformer = builder.get()
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RecurrentEncoderBuilder(BaseTransformerEncoderBuilder):
+    &#34;&#34;&#34;Build a transformer encoder for autoregressive processing of sequences.
+
+    Example usage:
+
+        builder = RecurrentEncoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.attention_type = &#34;linear&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for recurrent attention.&#34;&#34;&#34;
+        return RecurrentAttentionBuilder()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent layer that projects queries keys
+        and values.&#34;&#34;&#34;
+        return RecurrentAttentionLayer
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent transformer encoder.&#34;&#34;&#34;
+        return RecurrentTransformerEncoder
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the recurrent transformer encoder layer.&#34;&#34;&#34;
+        return RecurrentTransformerEncoderLayer</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention">attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type">attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.TransformerDecoderBuilder"><code class="flex name class">
+<span>class <span class="ident">TransformerDecoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build a transformer decoder for training or processing of sequences all
+elements at a time.</p>
+<p>Example usage:</p>
+<pre><code>builder = TransformerDecoderBuilder()
+builder.n_layers = 12
+builder.n_heads = 8
+builder.feed_forward_dimensions = 1024
+builder.query_dimensions = 64
+builder.value_dimensions = 64
+builder.dropout = 0.1
+builder.attention_dropout = 0.1
+builder.self_attention_type = "full"
+builder.cross_attention_type = "full"
+transformer = builder.get()
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TransformerDecoderBuilder(BaseTransformerDecoderBuilder):
+    &#34;&#34;&#34;Build a transformer decoder for training or processing of sequences all
+    elements at a time.
+
+    Example usage:
+
+        builder = TransformerDecoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.self_attention_type = &#34;full&#34;
+        builder.cross_attention_type = &#34;full&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_self_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_cross_attention_builder(self):
+        &#34;&#34;&#34;Return an attention builder for creating non-recurrent attention
+        variants.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_self_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_cross_attention_layer_class(self):
+        &#34;&#34;&#34;Return the non-recurrent attention layer to project queries, keys
+        and values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_decoder_class(self):
+        &#34;&#34;&#34;Return the transformer decoder class.&#34;&#34;&#34;
+        return TransformerDecoder
+
+    def _get_decoder_layer_class(self):
+        &#34;&#34;&#34;Return the transformer decoder layer class.&#34;&#34;&#34;
+        return TransformerDecoderLayer</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention">cross_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type">cross_attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention">self_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type">self_attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.builders.transformer_builders.TransformerEncoderBuilder"><code class="flex name class">
+<span>class <span class="ident">TransformerEncoderBuilder</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build a batch transformer encoder for training or processing of
+sequences all elements at a time.</p>
+<p>Example usage:</p>
+<pre><code>builder = TransformerEncoderBuilder()
+builder.n_layers = 12
+builder.n_heads = 8
+builder.feed_forward_dimensions = 1024
+builder.query_dimensions = 64
+builder.value_dimensions = 64
+builder.dropout = 0.1
+builder.attention_dropout = 0.1
+builder.attention_type = "linear"
+transformer = builder.get()
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TransformerEncoderBuilder(BaseTransformerEncoderBuilder):
+    &#34;&#34;&#34;Build a batch transformer encoder for training or processing of
+    sequences all elements at a time.
+
+    Example usage:
+
+        builder = TransformerEncoderBuilder()
+        builder.n_layers = 12
+        builder.n_heads = 8
+        builder.feed_forward_dimensions = 1024
+        builder.query_dimensions = 64
+        builder.value_dimensions = 64
+        builder.dropout = 0.1
+        builder.attention_dropout = 0.1
+        builder.attention_type = &#34;linear&#34;
+        transformer = builder.get()
+    &#34;&#34;&#34;
+    def _get_attention_builder(self):
+        &#34;&#34;&#34;Return an instance of the appropriate attention builder.&#34;&#34;&#34;
+        return AttentionBuilder()
+
+    def _get_attention_layer_class(self):
+        &#34;&#34;&#34;Return the class for the layer that projects queries keys and
+        values.&#34;&#34;&#34;
+        return AttentionLayer
+
+    def _get_encoder_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder.&#34;&#34;&#34;
+        return TransformerEncoder
+
+    def _get_encoder_layer_class(self):
+        &#34;&#34;&#34;Return the class for the transformer encoder layer.&#34;&#34;&#34;
+        return TransformerEncoderLayer</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></li>
+<li><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></li>
+<li><a title="fast_transformers.builders.base.BaseBuilder" href="base.html#fast_transformers.builders.base.BaseBuilder">BaseBuilder</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention">attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type">attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_dictionary" href="base.html#fast_transformers.builders.base.BaseBuilder.from_dictionary">from_dictionary</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_kwargs" href="base.html#fast_transformers.builders.base.BaseBuilder.from_kwargs">from_kwargs</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.from_namespace" href="base.html#fast_transformers.builders.base.BaseBuilder.from_namespace">from_namespace</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers.builders" href="index.html">fast_transformers.builders</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder">BaseTransformerBuilder</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.activation">activation</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.dropout">dropout</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.event_dispatcher">event_dispatcher</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.feed_forward_dimensions">feed_forward_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.final_normalization">final_normalization</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.get">get</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_heads">n_heads</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.n_layers">n_layers</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.query_dimensions">query_dimensions</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions" href="#fast_transformers.builders.transformer_builders.BaseTransformerBuilder.value_dimensions">value_dimensions</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder">BaseTransformerDecoderBuilder</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention">cross_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.cross_attention_type">cross_attention_type</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention">self_attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerDecoderBuilder.self_attention_type">self_attention_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder">BaseTransformerEncoderBuilder</a></code></h4>
+<ul class="">
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention">attention</a></code></li>
+<li><code><a title="fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type" href="#fast_transformers.builders.transformer_builders.BaseTransformerEncoderBuilder.attention_type">attention_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.RecurrentDecoderBuilder" href="#fast_transformers.builders.transformer_builders.RecurrentDecoderBuilder">RecurrentDecoderBuilder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.RecurrentEncoderBuilder" href="#fast_transformers.builders.transformer_builders.RecurrentEncoderBuilder">RecurrentEncoderBuilder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.TransformerDecoderBuilder" href="#fast_transformers.builders.transformer_builders.TransformerDecoderBuilder">TransformerDecoderBuilder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.builders.transformer_builders.TransformerEncoderBuilder" href="#fast_transformers.builders.transformer_builders.TransformerEncoderBuilder">TransformerEncoderBuilder</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.6.dev1+g65b31fd</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

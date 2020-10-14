@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Builders - Fast Transformers for PyTorch</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Builders";
+    var mkdocs_page_input_path = "builders.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Fast Transformers for PyTorch</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../transformers/">Transformers</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../masking/">Masking</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../attention/">Attention</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../feature_maps/">Feature Maps</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Builders</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#builder-api">Builder API</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transformer-builders">Transformer Builders</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#attention-builders">Attention Builders</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#attention-composition">Attention composition</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#attention-registry">Attention Registry</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../custom_attention_layer/">Custom Attention Layer</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../recurrent_transformers/">Recurrent Transformers</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../events/">Events</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tips_and_tricks/">Tips and Tricks</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="/api_docs/fast_transformers/">API Docs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Fast Transformers for PyTorch</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Builders</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/idiap/fast-transformers/edit/master/docs/builders.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="builders">Builders</h1>
+<p>The builders module takes care of simplifying the construction of transformer
+networks. The following example showcases how simple it is to create a
+transformer encoder using the <a href="/api_docs/fast_transformers/builders/transformer_builders.html">TransformerEncoderBuilder</a>.</p>
+<pre><code class="python">import torch
+
+# Building without a builder
+from fast_transformers.transformers import TransformerEncoder, \
+    TransformerEncoderLayer
+from fast_transformers.attention import AttentionLayer, FullAttention
+
+bert = TransformerEncoder(
+    [
+        TransformerEncoderLayer(
+            AttentionLayer(FullAttention(), 768, 12),
+            768,
+            12,
+            activation=&quot;gelu&quot;
+        ) for l in range(12)
+    ],
+    norm_layer=torch.nn.LayerNorm(768)
+)
+
+# Building with a builder
+from fast_transformers.builders import TransformerEncoderBuilder
+bert = TransformerEncoderBuilder.from_kwargs(
+    attention_type=&quot;full&quot;,
+    n_layers=12,
+    n_heads=12,
+    feed_forward_dimensions=768*4,
+    query_dimensions=768,
+    activation=&quot;gelu&quot;
+)
+</code></pre>
+
+<p>Although it seems that the creation of a transformer is as simple with and
+without the builder, it becomes apparent that changing the creation logic with
+the builder is significantly easier. For instance, the <code>attention_type</code> can be
+read from a configuration file or from command line arguments.
+The rest of this page describes the API of the builders.</p>
+<h2 id="builder-api">Builder API</h2>
+<p>The interface for all the builders is a simple method <code>get()</code> without any
+arguments that returns a PyTorch module that implements a transformer.</p>
+<p>All the parameters of the builders are simple python properties that can be set
+after the creation of the builder object.</p>
+<pre><code class="python">builder = ...                          # create a builder
+
+builder.parameter = value              # set a parameter
+builder.other_parameter = other_value  # and another parameter
+transformer = builder.get()            # construct the transformer
+
+builder.parameter = changed_value      # change a parameter
+other_transformer = builder.get()      # construct another transformer
+</code></pre>
+
+<p>The <a href="/api_docs/fast_transformers/builders/base.html">BaseBuilder</a> provides helper static methods that make it simpler to set
+multiple builder arguments at once from configuration files or command line
+arguments.</p>
+<pre><code class="python">from_dictionary(dictionary, strict=True)
+</code></pre>
+
+<p>Construct a builder and set all the parameters in the dictionary. If <code>strict</code>
+is set to True then throw a ValueError in case a dictionary key does not
+correspond to a builder parameter.</p>
+<pre><code class="python">from_kwargs(**kwargs)
+</code></pre>
+
+<p>Construct a builder and set all the keyword arguments as builder parameters.</p>
+<pre><code class="python">from_namespace(args, strict=False)
+</code></pre>
+
+<p>Construct a builder from an argument list returned by the python argparse
+module. If <code>strict</code> is set to True then throw a ValueError in case an argument
+does not correspond to a builder parameter.</p>
+<h2 id="transformer-builders">Transformer Builders</h2>
+<p>There exist the following transformer builders for creating encoder and decoder
+architectures for inference and training:</p>
+<ul>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>TransformerEncoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/transformers.html#fast_transformers.transformers.TransformerEncoder">TransformerEncoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>TransformerDecoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/transformers.html#fast_transformers.transformers.TransformerDecoder">TransformerDecoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>RecurrentEncoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerEncoder">RecurrentTransformerEncoder</a></li>
+<li><a href="/api_docs/fast_transformers/builders/transformer_builders.html"><strong>RecurrentDecoderBuilder</strong></a> builds instances of <a href="/api_docs/fast_transformers/recurrent/transformers.html#fast_transformers.recurrent.transformers.RecurrentTransformerDecoder">RecurrentTransformerDecoder</a></li>
+</ul>
+<h2 id="attention-builders">Attention Builders</h2>
+<p><a href="/api_docs/fast_transformers/builders/attention_builders.html">Attention builders</a> simplify the construction of the various attention
+modules and allow for plugin-like extension mechanisms when creating new
+attention implementations.</p>
+<p>Their API is the same as the transformer builders, namely they accept
+attributes as parameters and then calling <code>get(attention_type: str)</code> constructs
+an <code>nn.Module</code> that implements an attention layer.</p>
+<pre><code class="python">from fast_transformers.builders import AttentionBuilder
+
+builder = AttentionBuilder.from_kwargs(
+    attention_dropout=0.1,                   # used by softmax attention
+    softmax_temp=1.,                         # used by softmax attention
+    feature_map=lambda x: (x&gt;0).float() * x  # used by linear
+)
+softmax = builder.get(&quot;full&quot;)
+linear = builder.get(&quot;linear&quot;)
+</code></pre>
+
+<p>The library provides the following attention builders that create the
+correspondingly named attention modules.</p>
+<ul>
+<li>AttentionBuilder</li>
+<li>RecurrentAttentionBuilder</li>
+<li>RecurrentCrossAttentionBuilder</li>
+</ul>
+<h3 id="attention-composition">Attention composition</h3>
+<p>The attention builders allow for <em>attention composition</em> through a simple
+convention of the <code>attention_type</code> parameter. Attention composition allows the
+creation of an attention layer that accepts one or more attention layers as a
+parameters. An example of this pattern is the <a href="/api_docs/fast_transformers/attention/conditional_full_attention.html">ConditionalFullAttention</a> that
+performs full softmax attention when the sequence length is small and delegates
+to another attention type when the sequence length becomes large.</p>
+<p>The following example code creates an attention layer that uses <a href="/api_docs/fast_transformers/attention/improved_clustered_attention.html">improved
+clustered attention</a> for sequences larger than 512 elements and full softmax
+attention otherwise.</p>
+<pre><code class="python">builder = AttentionBuilder.from_kwargs(
+    attention_dropout=0.1,  # used by all
+    softmax_temp=0.125,
+    topk=32,                # used by improved clustered
+    clusters=256,
+    bits=32,
+    length_limit=512        # used by conditional attention
+)
+attention = builder.get(&quot;conditional-full:improved-clustered&quot;)
+</code></pre>
+
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>Attention layers that are designed for composition cannot be used
+    standalone. For instance <code>conditional-full</code> is not a valid
+    attention type by itsself.</p>
+</div>
+
+<h3 id="attention-registry">Attention Registry</h3>
+<p>The attention builders allow the dynamic registering of attention
+implementations through an <a href="/api_docs/fast_transformers/attention_registry/index.html">attention registry</a>. There are three
+registries, one for each available builder. You can find plenty of usage
+examples in the provided attention implementations (e.g. <a href="https://github.com/idiap/fast-transformers/blob/master/fast_transformers/attention/full_attention.py">FullAttention</a>).</p>
+<p>This should only concern developers of new attention implementations and a
+simple example can be found in the <a href="../custom_attention_layer/">custom attention
+layer</a> section of the docs.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../custom_attention_layer/" class="btn btn-neutral float-right" title="Custom Attention Layer">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../feature_maps/" class="btn btn-neutral" title="Feature Maps"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/idiap/fast-transformers/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../feature_maps/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../custom_attention_layer/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
+<title>fast_transformers.events.filters API documentation</title>
+<meta name="description" content="Define composable functions to filter events." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>fast_transformers.events.filters</code></h1>
+</header>
+<section id="section-intro">
+<p>Define composable functions to filter events.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
+#
+
+&#34;&#34;&#34;Define composable functions to filter events.&#34;&#34;&#34;
+
+import weakref
+
+from .event import Event
+
+
+class EventFilter(object):
+    &#34;&#34;&#34;EventFilter instances are predicates (ie functions that return True or
+    False) to be used with an event dispatcher for filtering event
+    instances.
+
+    The main benefit from using raw functions is that an EventFilter composes
+    very easily using operators such as &amp;, |, ~.
+
+    Example
+    --------
+
+        event_filter = AttentionEvent | layer_name_contains(&#34;layers.1&#34;)
+        event_filter = from_layer(transformer.layers[2].attention)
+        event_filter = (
+            AttentionEvent &amp;
+            lambda ev: torch.isnan(ev.attention_matrix).any()
+        )
+    &#34;&#34;&#34;
+    def __call__(self, event):
+        raise NotImplementedError()
+
+    def _to_event_filter(self, other):
+        if isinstance(other, EventFilter):
+            return other
+        if isinstance(other, type) and issubclass(other, Event):
+            return event_class(other)
+        if callable(other):
+            return CallableEventFilter(other)
+
+        return NotImplemented
+
+    def __and__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: self(ev) and other(ev))
+
+    def __rand__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: other(ev) and self(ev))
+
+    def __or__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: self(ev) or other(ev))
+
+    def __ror__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: other(ev) or self(ev))
+
+    def __invert__(self):
+        return CallableEventFilter(lambda ev: not self(ev))
+
+
+class CallableEventFilter(EventFilter):
+    &#34;&#34;&#34;Wrap a function with an EventFilter object.&#34;&#34;&#34;
+    def __init__(self, event_filter):
+        self._event_filter = event_filter
+
+    def __call__(self, event):
+        return self._event_filter(event)
+
+
+class LayerNameEventFilter(EventFilter):
+    &#34;&#34;&#34;A LayerNameEventFilter allows to filter events based on a human readable
+    name of the layer that emitted them.
+
+    Note that LayerNameEventFilter keeps a weak reference to all modules which
+    means that it cannot be used to prevent modules from being garbage
+    collected.
+
+    Arguments
+    ---------
+        root: torch.nn.Module instance that represents the root container
+        name_filter: callable, that returns true if the name 
+    &#34;&#34;&#34;
+    def __init__(self, root, name_filter):
+        self._names = {
+            weakref.ref(m): n
+            for n, m in root.named_modules()
+        }
+        self._name_filter = name_filter
+
+    def __call__(self, event):
+        name = self._names.get(weakref.ref(event.source), None)
+        if name is None:
+            return False
+        return self._name_filter(name)
+
+
+def event_class(klass):
+    &#34;&#34;&#34;Select events that are instances of `klass`.
+
+    Arguments
+    ---------
+        klass: A class to check the event instance against
+
+    Returns
+    -------
+        An instance of EventFilter
+    &#34;&#34;&#34;
+    return CallableEventFilter(lambda ev: isinstance(ev, klass))
+
+
+def from_layer(layer):
+    &#34;&#34;&#34;Select events that are dispatched from the `layer`.
+
+    Arguments
+    ---------
+        layer: An instance of torch.nn.Module to check against the event source
+
+    Returns
+    -------
+        An instance of EventFilter
+    &#34;&#34;&#34;
+    return CallableEventFilter(lambda ev: ev.source is layer)
+
+
+def layer_name_contains(root, name):
+    &#34;&#34;&#34;Select events that contain `name` in their human readable name.
+
+    We use root.named_modules() to get human readable names for the layers.
+    &#34;&#34;&#34;
+    return LayerNameEventFilter(root, lambda n: name in n)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="fast_transformers.events.filters.event_class"><code class="name flex">
+<span>def <span class="ident">event_class</span></span>(<span>klass)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Select events that are instances of <code>klass</code>.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>klass: A class to check the event instance against
+</code></pre>
+<h2 id="returns">Returns</h2>
+<pre><code>An instance of EventFilter
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_class(klass):
+    &#34;&#34;&#34;Select events that are instances of `klass`.
+
+    Arguments
+    ---------
+        klass: A class to check the event instance against
+
+    Returns
+    -------
+        An instance of EventFilter
+    &#34;&#34;&#34;
+    return CallableEventFilter(lambda ev: isinstance(ev, klass))</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.events.filters.from_layer"><code class="name flex">
+<span>def <span class="ident">from_layer</span></span>(<span>layer)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Select events that are dispatched from the <code>layer</code>.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>layer: An instance of torch.nn.Module to check against the event source
+</code></pre>
+<h2 id="returns">Returns</h2>
+<pre><code>An instance of EventFilter
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_layer(layer):
+    &#34;&#34;&#34;Select events that are dispatched from the `layer`.
+
+    Arguments
+    ---------
+        layer: An instance of torch.nn.Module to check against the event source
+
+    Returns
+    -------
+        An instance of EventFilter
+    &#34;&#34;&#34;
+    return CallableEventFilter(lambda ev: ev.source is layer)</code></pre>
+</details>
+</dd>
+<dt id="fast_transformers.events.filters.layer_name_contains"><code class="name flex">
+<span>def <span class="ident">layer_name_contains</span></span>(<span>root, name)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Select events that contain <code>name</code> in their human readable name.</p>
+<p>We use root.named_modules() to get human readable names for the layers.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def layer_name_contains(root, name):
+    &#34;&#34;&#34;Select events that contain `name` in their human readable name.
+
+    We use root.named_modules() to get human readable names for the layers.
+    &#34;&#34;&#34;
+    return LayerNameEventFilter(root, lambda n: name in n)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.events.filters.CallableEventFilter"><code class="flex name class">
+<span>class <span class="ident">CallableEventFilter</span></span>
+<span>(</span><span>event_filter)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Wrap a function with an EventFilter object.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CallableEventFilter(EventFilter):
+    &#34;&#34;&#34;Wrap a function with an EventFilter object.&#34;&#34;&#34;
+    def __init__(self, event_filter):
+        self._event_filter = event_filter
+
+    def __call__(self, event):
+        return self._event_filter(event)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.events.filters.EventFilter" href="#fast_transformers.events.filters.EventFilter">EventFilter</a></li>
+</ul>
+</dd>
+<dt id="fast_transformers.events.filters.EventFilter"><code class="flex name class">
+<span>class <span class="ident">EventFilter</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>EventFilter instances are predicates (ie functions that return True or
+False) to be used with an event dispatcher for filtering event
+instances.</p>
+<p>The main benefit from using raw functions is that an EventFilter composes
+very easily using operators such as &amp;, |, ~.</p>
+<h2 id="example">Example</h2>
+<pre><code>event_filter = AttentionEvent | layer_name_contains("layers.1")
+event_filter = from_layer(transformer.layers[2].attention)
+event_filter = (
+    AttentionEvent &amp;
+    lambda ev: torch.isnan(ev.attention_matrix).any()
+)
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventFilter(object):
+    &#34;&#34;&#34;EventFilter instances are predicates (ie functions that return True or
+    False) to be used with an event dispatcher for filtering event
+    instances.
+
+    The main benefit from using raw functions is that an EventFilter composes
+    very easily using operators such as &amp;, |, ~.
+
+    Example
+    --------
+
+        event_filter = AttentionEvent | layer_name_contains(&#34;layers.1&#34;)
+        event_filter = from_layer(transformer.layers[2].attention)
+        event_filter = (
+            AttentionEvent &amp;
+            lambda ev: torch.isnan(ev.attention_matrix).any()
+        )
+    &#34;&#34;&#34;
+    def __call__(self, event):
+        raise NotImplementedError()
+
+    def _to_event_filter(self, other):
+        if isinstance(other, EventFilter):
+            return other
+        if isinstance(other, type) and issubclass(other, Event):
+            return event_class(other)
+        if callable(other):
+            return CallableEventFilter(other)
+
+        return NotImplemented
+
+    def __and__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: self(ev) and other(ev))
+
+    def __rand__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: other(ev) and self(ev))
+
+    def __or__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: self(ev) or other(ev))
+
+    def __ror__(self, other):
+        other = self._to_event_filter(other)
+        if other is NotImplemented:
+            return other
+        return CallableEventFilter(lambda ev: other(ev) or self(ev))
+
+    def __invert__(self):
+        return CallableEventFilter(lambda ev: not self(ev))</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.events.filters.CallableEventFilter" href="#fast_transformers.events.filters.CallableEventFilter">CallableEventFilter</a></li>
+<li><a title="fast_transformers.events.filters.LayerNameEventFilter" href="#fast_transformers.events.filters.LayerNameEventFilter">LayerNameEventFilter</a></li>
+</ul>
+</dd>
+<dt id="fast_transformers.events.filters.LayerNameEventFilter"><code class="flex name class">
+<span>class <span class="ident">LayerNameEventFilter</span></span>
+<span>(</span><span>root, name_filter)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A LayerNameEventFilter allows to filter events based on a human readable
+name of the layer that emitted them.</p>
+<p>Note that LayerNameEventFilter keeps a weak reference to all modules which
+means that it cannot be used to prevent modules from being garbage
+collected.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>root: torch.nn.Module instance that represents the root container
+name_filter: callable, that returns true if the name
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LayerNameEventFilter(EventFilter):
+    &#34;&#34;&#34;A LayerNameEventFilter allows to filter events based on a human readable
+    name of the layer that emitted them.
+
+    Note that LayerNameEventFilter keeps a weak reference to all modules which
+    means that it cannot be used to prevent modules from being garbage
+    collected.
+
+    Arguments
+    ---------
+        root: torch.nn.Module instance that represents the root container
+        name_filter: callable, that returns true if the name 
+    &#34;&#34;&#34;
+    def __init__(self, root, name_filter):
+        self._names = {
+            weakref.ref(m): n
+            for n, m in root.named_modules()
+        }
+        self._name_filter = name_filter
+
+    def __call__(self, event):
+        name = self._names.get(weakref.ref(event.source), None)
+        if name is None:
+            return False
+        return self._name_filter(name)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.events.filters.EventFilter" href="#fast_transformers.events.filters.EventFilter">EventFilter</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers.events" href="index.html">fast_transformers.events</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="fast_transformers.events.filters.event_class" href="#fast_transformers.events.filters.event_class">event_class</a></code></li>
+<li><code><a title="fast_transformers.events.filters.from_layer" href="#fast_transformers.events.filters.from_layer">from_layer</a></code></li>
+<li><code><a title="fast_transformers.events.filters.layer_name_contains" href="#fast_transformers.events.filters.layer_name_contains">layer_name_contains</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.events.filters.CallableEventFilter" href="#fast_transformers.events.filters.CallableEventFilter">CallableEventFilter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.events.filters.EventFilter" href="#fast_transformers.events.filters.EventFilter">EventFilter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.events.filters.LayerNameEventFilter" href="#fast_transformers.events.filters.LayerNameEventFilter">LayerNameEventFilter</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.6.dev1+g65b31fd</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

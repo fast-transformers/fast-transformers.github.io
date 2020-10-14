@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.6.dev1+g65b31fd" />
+<title>fast_transformers.feature_maps.fourier_features API documentation</title>
+<meta name="description" content="Implement the positive orthogonal random features from the paper
+&#34;Rethinking Attention with Performers&#34; https://arxiv.org/pdf/2009.14794.pdf
+and the …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>fast_transformers.feature_maps.fourier_features</code></h1>
+</header>
+<section id="section-intro">
+<p>Implement the positive orthogonal random features from the paper
+"Rethinking Attention with Performers" <a href="https://arxiv.org/pdf/2009.14794.pdf">https://arxiv.org/pdf/2009.14794.pdf</a>
+and the traditional random Fourier features that approximate the RBF kernel.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#
+# Copyright (c) 2020 Idiap Research Institute, http://www.idiap.ch/
+# Written by Angelos Katharopoulos &lt;angelos.katharopoulos@idiap.ch&gt;
+#
+
+&#34;&#34;&#34;Implement the positive orthogonal random features from the paper
+&#34;Rethinking Attention with Performers&#34; https://arxiv.org/pdf/2009.14794.pdf
+and the traditional random Fourier features that approximate the RBF kernel.
+&#34;&#34;&#34;
+
+from math import sqrt, log
+import warnings
+
+import torch
+
+from .base import FeatureMap
+
+
+def orthogonal_random_matrix_(w):
+    &#34;&#34;&#34;Initialize the matrix w in-place to compute orthogonal random features.
+
+    The matrix is initialized such that its columns are orthogonal to each
+    other (in groups of size `rows`) and their norms is drawn from the
+    chi-square distribution with `rows` degrees of freedom (namely the norm of
+    a `rows`-dimensional vector distributed as N(0, I)).
+
+    Arguments
+    ---------
+        w: float tensor of size (rows, columns)
+    &#34;&#34;&#34;
+    rows, columns = w.shape
+    start = 0
+    while start &lt; columns:
+        end = min(start+rows, columns)
+        block = torch.randn(rows, rows, device=w.device)
+        norms = torch.sqrt(torch.einsum(&#34;ab,ab-&gt;a&#34;, block, block))
+        Q, _ = torch.qr(block)
+        w[:, start:end] = (
+            Q[:, :end-start] * norms[None, :end-start]
+        )
+        start += rows
+
+
+class RandomFourierFeatures(FeatureMap):
+    &#34;&#34;&#34;Random Fourier Features for the RBF kernel according to [1].
+
+    [1]: &#34;Weighted Sums of Random Kitchen Sinks: Replacing minimization with
+         randomization in learning&#34; by A. Rahimi and Benjamin Recht.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the Gaussian kernel
+                      approximation exp(-t * |x-y|^2)
+                      (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, When True the random matrix is initialized for
+                    orthogonal random features to reduce the approximation
+                    variance (default: False)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=False):
+        super(RandomFourierFeatures, self).__init__(query_dimensions)
+
+        self.n_dims = n_dims or query_dimensions
+        self.orthogonal = orthogonal
+        self.softmax_temp = (
+            1/sqrt(query_dimensions) if softmax_temp is None
+            else softmax_temp
+        )
+
+        # Make a buffer for storing the sampled omega
+        self.register_buffer(
+            &#34;omega&#34;,
+            torch.zeros(query_dimensions, self.n_dims//2)
+        )
+
+    def new_feature_map(self):
+        if self.orthogonal:
+            orthogonal_random_matrix_(self.omega)
+        else:
+            self.omega.normal_()
+
+    def forward(self, x):
+        x = x * sqrt(self.softmax_temp)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+        phi = torch.cat([torch.cos(u), torch.sin(u)], dim=-1)
+        return phi * sqrt(2/self.n_dims)
+
+
+class SmoothedRandomFourierFeatures(RandomFourierFeatures):
+    &#34;&#34;&#34;Simply add a constant value to the dot product in order to avoid
+    possible numerical instabilities when the feature map is slightly
+    negative.
+
+    Implements K(x, y) = exp(-|x-y|^2) + s.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the Gaussian kernel
+                      approximation exp(-t * |x-y|^2)
+                      (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, When True the random matrix is initialized for
+                    orthogonal random features to reduce the approximation
+                    variance (default: False)
+        smoothing: float, The smoothing parameter to add to the dot product.
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=False, smoothing=1.0):
+        super(SmoothedRandomFourierFeatures, self).__init__(
+            query_dimensions,
+            n_dims=query_dimensions-1 if n_dims is None else n_dims-1,
+            softmax_temp=softmax_temp,
+            orthogonal=orthogonal,
+        )
+        self.smoothing = smoothing
+
+    def forward(self, x):
+        y = super().forward(x)
+        smoothing = torch.full(
+            y.shape[:-1] + (1,),
+            self.smoothing,
+            dtype=y.dtype,
+            device=y.device
+        )
+        return torch.cat([y, smoothing], dim=-1)
+
+
+class Favor(RandomFourierFeatures):
+    &#34;&#34;&#34;Positive orthogonal random features that approximate the softmax kernel.
+
+    Basically implementation of Lemma 1 from &#34;Rethinking Attention with
+    Performers&#34;.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the softmax approximation
+                     (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, If set to true then the random matrix should be
+                    orthogonal which results in lower approximation variance
+                    (default: True)
+        stabilize: bool, If set to True subtract the max norm from the
+                   exponentials to make sure that there are no infinities. It
+                   is equivalent to a robust implementation of softmax where
+                   the max is subtracted before the exponentiation.
+                   (default: False)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=True, stabilize=False):
+        super(Favor, self).__init__(query_dimensions, n_dims=n_dims,
+                                    softmax_temp=softmax_temp,
+                                    orthogonal=orthogonal)
+        self.stabilize = stabilize
+
+    def _check_sequence_length(self, x):
+        &#34;&#34;&#34;Check that the 2nd dimension is larger than the 3rd as a heuristic
+        that the sequence length will be larger than the number of heads. If
+        not simply warn of a possible bug.&#34;&#34;&#34;
+        if len(x.shape) != 4:
+            warnings.warn((&#34;Favor.stabilize is set to True but the input &#34;
+                           &#34;feature does not have the shape (N, L, H, D) &#34;
+                           &#34;which may result in unexpected behaviour&#34;))
+
+        if x.shape[1] &lt; x.shape[2]:
+            warnings.warn((&#34;Favor.stabilize is set to True but the 2nd &#34;
+                           &#34;dimension of the input is smaller than the 3rd &#34;
+                           &#34;which could indicate that the sequence length and &#34;
+                           &#34;the heads are flipped. This may result in incorrect &#34;
+                           &#34;behaviour. The shape of the input is &#34;
+                           &#34;{!r}.&#34;).format(x.shape))
+
+    def forward(self, x):
+        x = x * sqrt(self.softmax_temp)
+        norm_x_squared = torch.einsum(&#34;...d,...d-&gt;...&#34;, x, x).unsqueeze(-1)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+
+        # Compute the offset for the exponential such that h(x) is multiplied
+        # in logspace. In particular, we multiply with exp(-norm_x_squared/2)
+        # and 1/sqrt(self.n_dims)
+        offset = norm_x_squared * 0.5 + 0.5 * log(self.n_dims)
+
+        # If stabilize is True then add the max norm per sequence in order to
+        # ensure that exp_u1 and exp_u2 will be &lt;1.
+        #
+        # NOTE: This is the only part of this feature map that assumes the
+        #       2nd dimension is the sequence length. We call the
+        #       _check_sequence_length dimension function to be able to catch
+        #       some possible bugs ahead of time.
+        if self.stabilize:
+            self._check_sequence_length(norm_x_squared)
+            offset = offset + norm_x_squared.max(1, keepdim=True)[0]
+
+        exp_u1 = torch.exp(u - offset)
+        exp_u2 = torch.exp(-u - offset)
+        phi = torch.cat([exp_u1, exp_u2], dim=-1)
+
+        return phi
+
+
+class GeneralizedRandomFeatures(RandomFourierFeatures):
+    &#34;&#34;&#34;Implements the generalized random Fourier features from Performers.
+
+    It computes φ(χ) = [f(ω_1 χ), f(ω_2 χ), ..., f(ω_n χ)] where f(.) is the
+    passed in `kernel_fn`.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (default: query_dimensions)
+        softmax_temp: float, A normalizer for the dot products that is
+                     multiplied to the input features before the feature map
+                     application (default: 1.0)
+        orthogonal: bool, If set to true then the random matrix should be
+                    orthogonal which results in lower approximation variance
+                    (default: True)
+        kernel_fn: callable, defines the f used for the feature map.
+                   (default: relu)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=1.0,
+                 orthogonal=True, kernel_fn=torch.relu):
+        super(GeneralizedRandomFeatures, self).__init__(
+            query_dimensions,
+            n_dims=2*query_dimensions if n_dims is None else 2*n_dims,
+            softmax_temp=softmax_temp,
+            orthogonal=orthogonal
+        )
+        self.kernel_fn = kernel_fn
+
+    def forward(self, x):
+        if self.softmax_temp != 1.0:
+            x = x * sqrt(self.softmax_temp)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+        return self.kernel_fn(u)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="fast_transformers.feature_maps.fourier_features.orthogonal_random_matrix_"><code class="name flex">
+<span>def <span class="ident">orthogonal_random_matrix_</span></span>(<span>w)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initialize the matrix w in-place to compute orthogonal random features.</p>
+<p>The matrix is initialized such that its columns are orthogonal to each
+other (in groups of size <code>rows</code>) and their norms is drawn from the
+chi-square distribution with <code>rows</code> degrees of freedom (namely the norm of
+a <code>rows</code>-dimensional vector distributed as N(0, I)).</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>w: float tensor of size (rows, columns)
+</code></pre></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def orthogonal_random_matrix_(w):
+    &#34;&#34;&#34;Initialize the matrix w in-place to compute orthogonal random features.
+
+    The matrix is initialized such that its columns are orthogonal to each
+    other (in groups of size `rows`) and their norms is drawn from the
+    chi-square distribution with `rows` degrees of freedom (namely the norm of
+    a `rows`-dimensional vector distributed as N(0, I)).
+
+    Arguments
+    ---------
+        w: float tensor of size (rows, columns)
+    &#34;&#34;&#34;
+    rows, columns = w.shape
+    start = 0
+    while start &lt; columns:
+        end = min(start+rows, columns)
+        block = torch.randn(rows, rows, device=w.device)
+        norms = torch.sqrt(torch.einsum(&#34;ab,ab-&gt;a&#34;, block, block))
+        Q, _ = torch.qr(block)
+        w[:, start:end] = (
+            Q[:, :end-start] * norms[None, :end-start]
+        )
+        start += rows</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="fast_transformers.feature_maps.fourier_features.Favor"><code class="flex name class">
+<span>class <span class="ident">Favor</span></span>
+<span>(</span><span>query_dimensions, n_dims=None, softmax_temp=None, orthogonal=True, stabilize=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Positive orthogonal random features that approximate the softmax kernel.</p>
+<p>Basically implementation of Lemma 1 from "Rethinking Attention with
+Performers".</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>query_dimensions: int, The input query dimensions in order to sample
+                  the noise matrix
+n_dims: int, The size of the feature map (should be divisible by 2)
+        (default: query_dimensions)
+softmax_temp: float, The temerature for the softmax approximation
+             (default: 1/sqrt(query_dimensions))
+orthogonal: bool, If set to true then the random matrix should be
+            orthogonal which results in lower approximation variance
+            (default: True)
+stabilize: bool, If set to True subtract the max norm from the
+           exponentials to make sure that there are no infinities. It
+           is equivalent to a robust implementation of softmax where
+           the max is subtracted before the exponentiation.
+           (default: False)
+</code></pre>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Favor(RandomFourierFeatures):
+    &#34;&#34;&#34;Positive orthogonal random features that approximate the softmax kernel.
+
+    Basically implementation of Lemma 1 from &#34;Rethinking Attention with
+    Performers&#34;.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the softmax approximation
+                     (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, If set to true then the random matrix should be
+                    orthogonal which results in lower approximation variance
+                    (default: True)
+        stabilize: bool, If set to True subtract the max norm from the
+                   exponentials to make sure that there are no infinities. It
+                   is equivalent to a robust implementation of softmax where
+                   the max is subtracted before the exponentiation.
+                   (default: False)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=True, stabilize=False):
+        super(Favor, self).__init__(query_dimensions, n_dims=n_dims,
+                                    softmax_temp=softmax_temp,
+                                    orthogonal=orthogonal)
+        self.stabilize = stabilize
+
+    def _check_sequence_length(self, x):
+        &#34;&#34;&#34;Check that the 2nd dimension is larger than the 3rd as a heuristic
+        that the sequence length will be larger than the number of heads. If
+        not simply warn of a possible bug.&#34;&#34;&#34;
+        if len(x.shape) != 4:
+            warnings.warn((&#34;Favor.stabilize is set to True but the input &#34;
+                           &#34;feature does not have the shape (N, L, H, D) &#34;
+                           &#34;which may result in unexpected behaviour&#34;))
+
+        if x.shape[1] &lt; x.shape[2]:
+            warnings.warn((&#34;Favor.stabilize is set to True but the 2nd &#34;
+                           &#34;dimension of the input is smaller than the 3rd &#34;
+                           &#34;which could indicate that the sequence length and &#34;
+                           &#34;the heads are flipped. This may result in incorrect &#34;
+                           &#34;behaviour. The shape of the input is &#34;
+                           &#34;{!r}.&#34;).format(x.shape))
+
+    def forward(self, x):
+        x = x * sqrt(self.softmax_temp)
+        norm_x_squared = torch.einsum(&#34;...d,...d-&gt;...&#34;, x, x).unsqueeze(-1)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+
+        # Compute the offset for the exponential such that h(x) is multiplied
+        # in logspace. In particular, we multiply with exp(-norm_x_squared/2)
+        # and 1/sqrt(self.n_dims)
+        offset = norm_x_squared * 0.5 + 0.5 * log(self.n_dims)
+
+        # If stabilize is True then add the max norm per sequence in order to
+        # ensure that exp_u1 and exp_u2 will be &lt;1.
+        #
+        # NOTE: This is the only part of this feature map that assumes the
+        #       2nd dimension is the sequence length. We call the
+        #       _check_sequence_length dimension function to be able to catch
+        #       some possible bugs ahead of time.
+        if self.stabilize:
+            self._check_sequence_length(norm_x_squared)
+            offset = offset + norm_x_squared.max(1, keepdim=True)[0]
+
+        exp_u1 = torch.exp(u - offset)
+        exp_u2 = torch.exp(-u - offset)
+        phi = torch.cat([exp_u1, exp_u2], dim=-1)
+
+        return phi</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></li>
+<li><a title="fast_transformers.feature_maps.base.FeatureMap" href="base.html#fast_transformers.feature_maps.base.FeatureMap">FeatureMap</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.factory" href="base.html#fast_transformers.feature_maps.base.FeatureMap.factory">factory</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_keys" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_keys">forward_keys</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_queries" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_queries">forward_queries</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.new_feature_map" href="base.html#fast_transformers.feature_maps.base.FeatureMap.new_feature_map">new_feature_map</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures"><code class="flex name class">
+<span>class <span class="ident">GeneralizedRandomFeatures</span></span>
+<span>(</span><span>query_dimensions, n_dims=None, softmax_temp=1.0, orthogonal=True, kernel_fn=&lt;built-in method relu of type object&gt;)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Implements the generalized random Fourier features from Performers.</p>
+<p>It computes φ(χ) = [f(ω_1 χ), f(ω_2 χ), &hellip;, f(ω_n χ)] where f(.) is the
+passed in <code>kernel_fn</code>.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>query_dimensions: int, The input query dimensions in order to sample
+                  the noise matrix
+n_dims: int, The size of the feature map (default: query_dimensions)
+softmax_temp: float, A normalizer for the dot products that is
+             multiplied to the input features before the feature map
+             application (default: 1.0)
+orthogonal: bool, If set to true then the random matrix should be
+            orthogonal which results in lower approximation variance
+            (default: True)
+kernel_fn: callable, defines the f used for the feature map.
+           (default: relu)
+</code></pre>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GeneralizedRandomFeatures(RandomFourierFeatures):
+    &#34;&#34;&#34;Implements the generalized random Fourier features from Performers.
+
+    It computes φ(χ) = [f(ω_1 χ), f(ω_2 χ), ..., f(ω_n χ)] where f(.) is the
+    passed in `kernel_fn`.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (default: query_dimensions)
+        softmax_temp: float, A normalizer for the dot products that is
+                     multiplied to the input features before the feature map
+                     application (default: 1.0)
+        orthogonal: bool, If set to true then the random matrix should be
+                    orthogonal which results in lower approximation variance
+                    (default: True)
+        kernel_fn: callable, defines the f used for the feature map.
+                   (default: relu)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=1.0,
+                 orthogonal=True, kernel_fn=torch.relu):
+        super(GeneralizedRandomFeatures, self).__init__(
+            query_dimensions,
+            n_dims=2*query_dimensions if n_dims is None else 2*n_dims,
+            softmax_temp=softmax_temp,
+            orthogonal=orthogonal
+        )
+        self.kernel_fn = kernel_fn
+
+    def forward(self, x):
+        if self.softmax_temp != 1.0:
+            x = x * sqrt(self.softmax_temp)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+        return self.kernel_fn(u)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></li>
+<li><a title="fast_transformers.feature_maps.base.FeatureMap" href="base.html#fast_transformers.feature_maps.base.FeatureMap">FeatureMap</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.factory" href="base.html#fast_transformers.feature_maps.base.FeatureMap.factory">factory</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_keys" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_keys">forward_keys</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_queries" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_queries">forward_queries</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.new_feature_map" href="base.html#fast_transformers.feature_maps.base.FeatureMap.new_feature_map">new_feature_map</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures"><code class="flex name class">
+<span>class <span class="ident">RandomFourierFeatures</span></span>
+<span>(</span><span>query_dimensions, n_dims=None, softmax_temp=None, orthogonal=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Random Fourier Features for the RBF kernel according to [1].</p>
+<p>[1]: "Weighted Sums of Random Kitchen Sinks: Replacing minimization with
+randomization in learning" by A. Rahimi and Benjamin Recht.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>query_dimensions: int, The input query dimensions in order to sample
+                  the noise matrix
+n_dims: int, The size of the feature map (should be divisible by 2)
+        (default: query_dimensions)
+softmax_temp: float, The temerature for the Gaussian kernel
+              approximation exp(-t * |x-y|^2)
+              (default: 1/sqrt(query_dimensions))
+orthogonal: bool, When True the random matrix is initialized for
+            orthogonal random features to reduce the approximation
+            variance (default: False)
+</code></pre>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RandomFourierFeatures(FeatureMap):
+    &#34;&#34;&#34;Random Fourier Features for the RBF kernel according to [1].
+
+    [1]: &#34;Weighted Sums of Random Kitchen Sinks: Replacing minimization with
+         randomization in learning&#34; by A. Rahimi and Benjamin Recht.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the Gaussian kernel
+                      approximation exp(-t * |x-y|^2)
+                      (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, When True the random matrix is initialized for
+                    orthogonal random features to reduce the approximation
+                    variance (default: False)
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=False):
+        super(RandomFourierFeatures, self).__init__(query_dimensions)
+
+        self.n_dims = n_dims or query_dimensions
+        self.orthogonal = orthogonal
+        self.softmax_temp = (
+            1/sqrt(query_dimensions) if softmax_temp is None
+            else softmax_temp
+        )
+
+        # Make a buffer for storing the sampled omega
+        self.register_buffer(
+            &#34;omega&#34;,
+            torch.zeros(query_dimensions, self.n_dims//2)
+        )
+
+    def new_feature_map(self):
+        if self.orthogonal:
+            orthogonal_random_matrix_(self.omega)
+        else:
+            self.omega.normal_()
+
+    def forward(self, x):
+        x = x * sqrt(self.softmax_temp)
+        u = x.unsqueeze(-2).matmul(self.omega).squeeze(-2)
+        phi = torch.cat([torch.cos(u), torch.sin(u)], dim=-1)
+        return phi * sqrt(2/self.n_dims)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.feature_maps.base.FeatureMap" href="base.html#fast_transformers.feature_maps.base.FeatureMap">FeatureMap</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.feature_maps.fourier_features.Favor" href="#fast_transformers.feature_maps.fourier_features.Favor">Favor</a></li>
+<li><a title="fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures" href="#fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures">GeneralizedRandomFeatures</a></li>
+<li><a title="fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures">SmoothedRandomFourierFeatures</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.feature_maps.base.FeatureMap" href="base.html#fast_transformers.feature_maps.base.FeatureMap">FeatureMap</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.feature_maps.base.FeatureMap.factory" href="base.html#fast_transformers.feature_maps.base.FeatureMap.factory">factory</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.base.FeatureMap.forward" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.base.FeatureMap.forward_keys" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_keys">forward_keys</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.base.FeatureMap.forward_queries" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_queries">forward_queries</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.base.FeatureMap.new_feature_map" href="base.html#fast_transformers.feature_maps.base.FeatureMap.new_feature_map">new_feature_map</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures"><code class="flex name class">
+<span>class <span class="ident">SmoothedRandomFourierFeatures</span></span>
+<span>(</span><span>query_dimensions, n_dims=None, softmax_temp=None, orthogonal=False, smoothing=1.0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Simply add a constant value to the dot product in order to avoid
+possible numerical instabilities when the feature map is slightly
+negative.</p>
+<p>Implements K(x, y) = exp(-|x-y|^2) + s.</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code>query_dimensions: int, The input query dimensions in order to sample
+                  the noise matrix
+n_dims: int, The size of the feature map (should be divisible by 2)
+        (default: query_dimensions)
+softmax_temp: float, The temerature for the Gaussian kernel
+              approximation exp(-t * |x-y|^2)
+              (default: 1/sqrt(query_dimensions))
+orthogonal: bool, When True the random matrix is initialized for
+            orthogonal random features to reduce the approximation
+            variance (default: False)
+smoothing: float, The smoothing parameter to add to the dot product.
+</code></pre>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SmoothedRandomFourierFeatures(RandomFourierFeatures):
+    &#34;&#34;&#34;Simply add a constant value to the dot product in order to avoid
+    possible numerical instabilities when the feature map is slightly
+    negative.
+
+    Implements K(x, y) = exp(-|x-y|^2) + s.
+
+    Arguments
+    ---------
+        query_dimensions: int, The input query dimensions in order to sample
+                          the noise matrix
+        n_dims: int, The size of the feature map (should be divisible by 2)
+                (default: query_dimensions)
+        softmax_temp: float, The temerature for the Gaussian kernel
+                      approximation exp(-t * |x-y|^2)
+                      (default: 1/sqrt(query_dimensions))
+        orthogonal: bool, When True the random matrix is initialized for
+                    orthogonal random features to reduce the approximation
+                    variance (default: False)
+        smoothing: float, The smoothing parameter to add to the dot product.
+    &#34;&#34;&#34;
+    def __init__(self, query_dimensions, n_dims=None, softmax_temp=None,
+                 orthogonal=False, smoothing=1.0):
+        super(SmoothedRandomFourierFeatures, self).__init__(
+            query_dimensions,
+            n_dims=query_dimensions-1 if n_dims is None else n_dims-1,
+            softmax_temp=softmax_temp,
+            orthogonal=orthogonal,
+        )
+        self.smoothing = smoothing
+
+    def forward(self, x):
+        y = super().forward(x)
+        smoothing = torch.full(
+            y.shape[:-1] + (1,),
+            self.smoothing,
+            dtype=y.dtype,
+            device=y.device
+        )
+        return torch.cat([y, smoothing], dim=-1)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></li>
+<li><a title="fast_transformers.feature_maps.base.FeatureMap" href="base.html#fast_transformers.feature_maps.base.FeatureMap">FeatureMap</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></b></code>:
+<ul class="hlist">
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.factory" href="base.html#fast_transformers.feature_maps.base.FeatureMap.factory">factory</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward">forward</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_keys" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_keys">forward_keys</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.forward_queries" href="base.html#fast_transformers.feature_maps.base.FeatureMap.forward_queries">forward_queries</a></code></li>
+<li><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures.new_feature_map" href="base.html#fast_transformers.feature_maps.base.FeatureMap.new_feature_map">new_feature_map</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="fast_transformers.feature_maps" href="index.html">fast_transformers.feature_maps</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="fast_transformers.feature_maps.fourier_features.orthogonal_random_matrix_" href="#fast_transformers.feature_maps.fourier_features.orthogonal_random_matrix_">orthogonal_random_matrix_</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="fast_transformers.feature_maps.fourier_features.Favor" href="#fast_transformers.feature_maps.fourier_features.Favor">Favor</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures" href="#fast_transformers.feature_maps.fourier_features.GeneralizedRandomFeatures">GeneralizedRandomFeatures</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.feature_maps.fourier_features.RandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.RandomFourierFeatures">RandomFourierFeatures</a></code></h4>
+</li>
+<li>
+<h4><code><a title="fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures" href="#fast_transformers.feature_maps.fourier_features.SmoothedRandomFourierFeatures">SmoothedRandomFourierFeatures</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.6.dev1+g65b31fd</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

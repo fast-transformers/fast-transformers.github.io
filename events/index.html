@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Events - Fast Transformers for PyTorch</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Events";
+    var mkdocs_page_input_path = "events.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Fast Transformers for PyTorch</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../transformers/">Transformers</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../masking/">Masking</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../attention/">Attention</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../feature_maps/">Feature Maps</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../builders/">Builders</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../custom_attention_layer/">Custom Attention Layer</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../recurrent_transformers/">Recurrent Transformers</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Events</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#eventdispatcher">EventDispatcher</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#event-filters">Event Filters</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#events_1">Events</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#qkvevent">QKVEvent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#attentionevent">AttentionEvent</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tips_and_tricks/">Tips and Tricks</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="/api_docs/fast_transformers/">API Docs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Fast Transformers for PyTorch</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Events</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/idiap/fast-transformers/edit/master/docs/events.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="events">Events</h1>
+<p>When training transformers, some internal representations, such as the
+attention matrices, are useful for identifying problems or understanding how
+the model works.</p>
+<p>Instead of making these representations accessible by returning them as the
+output of the model, we provide them via an event system. This allows for
+greater flexibility by allowing different attention implementations to return
+different things without affecting the execution speed or the interfaces.</p>
+<p>You can explore the interfaces of the event system in our <a href="/api_docs/fast_transformers/events/index.html">API Docs</a>.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>Before delving deeper into the API of the event system, the following commented
+code snippet collects all the attention matrices from a forward pass of a
+transformer and plots the first head of the first sample using matplotlib.</p>
+<pre><code class="python">import matplotlib.pyplot as plt
+import torch
+
+from fast_transformers.builders import TransformerEncoderBuilder
+from fast_transformers.events import EventDispatcher, AttentionEvent
+
+# Make a transformer as we always would
+transformer = TransformerEncoderBuilder.from_kwargs(
+    n_layers=4,
+    n_heads=4,
+    query_dimensions=64,
+    value_dimensions=64
+).get()
+
+# Make an event handler that just appends to a list
+attentions = []
+def save_attention_matrix(event):
+    attentions.append(event.attention_matrix.detach().cpu())
+
+# Register said event handler for AttentionEvents
+EventDispatcher.get().listen(AttentionEvent, save_attention_matrix)
+
+# Do a forward pass like always
+transformer(torch.rand(10, 100, 64*4))
+
+# Now get and plot the attention matrices from the `attentions` list
+fig, axes = plt.subplots(2, 2)
+for i in range(2):
+    for j in range(2):
+        axes[i, j].imshow(attentions[i*2+j][0, 0])
+        axes[i, j].set_title(&quot;Layer {} Head 0&quot;.format(i*2+j))
+plt.tight_layout()
+plt.show()
+</code></pre>
+
+<h2 id="eventdispatcher">EventDispatcher</h2>
+<p>The event system is implemented by the <a href="/api_docs/fast_transformers/events/event_dispatcher.html">EventDispatcher</a> which is shared by
+the transformer and attention modules as well as the rest of the system. The
+event dispatcher instance is injected as an argument to all attentions and
+transformer modules, but for further ease there is a global dictionary of event
+dispatchers that is accessible through the <code>get(key="")</code> factory method as
+follows:</p>
+<pre><code class="python">from fast_transformers.events import EventDispatcher
+
+# The default dispatcher used by all modules unless passed as an argument
+ed = EventDispatcher.get()
+</code></pre>
+
+<p>Unless an event dispatcher is provided via an argument, all modules simply use
+the default event dispatcher.</p>
+<h3 id="methods">Methods</h3>
+<pre><code class="python">EventDispatcher.listen(event_filter, event_handler)
+</code></pre>
+
+<p>The method <code>listen()</code> simply adds an event handler to be called when an event
+is dispatched via this dispatcher. The event handler will only be called if the
+event filter callable returns true for an event. For, details on the possible
+values of <code>event_filter</code> see the <a href="./#event-filters">event filter</a> section.</p>
+<p>The EventDispatcher automatically casts callables and Event subclasses to the
+corresponding filter instances.</p>
+<pre><code class="python">EventDispatcher.dispatch(event)
+</code></pre>
+
+<p>Simply, call any event handler that is registered for this type of event.</p>
+<pre><code class="python">EventDispatcher.remove(event_handler)
+EventDispatcher.clear()
+</code></pre>
+
+<p>Remove (unregister) a specific event handler using <code>remove()</code> or simply
+unregister all of the event handlers using the <code>clear()</code> method of the event
+dispatcher.</p>
+<h2 id="event-filters">Event Filters</h2>
+<p>The event filters are callables that accept a single argument, an instance of
+<code>Event</code>, and return whether to accept or dismiss this event. For ease of filter
+composition, we provide an <code>EventFilter</code> object that allows for boolean
+composition of filters using python operators, as follows:</p>
+<pre><code class="python">from fast_transformers.events.filters import event_class, from_layer, \
+    layer_name_contains
+
+# Checking whether an event is from a specific class
+filter1 = event_class(AttentionEvent)
+
+# Checking whether an event comes from a specific layer
+filter2 = from_layer(net.layers[10])
+
+# Checking whether the human readable name of the module contains a string
+filter3 = layer_name_contains(net, &quot;layers.10&quot;)
+
+# Check whether it comes from a specific layer *and* is an AttentionEvent
+filter4 = from_layer(net.layers[10] &amp; event_class(AttentionEvent)
+# or equivalently
+filter4 = from_layer(net.layers[10] &amp; AttentionEvent
+
+# Check whether the attention matrix has 4 heads
+filter5 = (
+    event_class(AttentionEvent) &amp;  # unless we also use the event_class
+                                   # filter the event might not have the
+                                   # attention_matrix attribute
+    (lambda ev: ev.attention_matrix.shape[2]==4)
+)
+</code></pre>
+
+<p>See the <a href="/api_docs/fast_transformers/events/filters.html">event filters API docs</a> for more information.</p>
+<h2 id="events_1">Events</h2>
+<p>The events are subclasses of <a href="/api_docs/fast_transformers/events/event.html#fast_transformers.events.event.Event">Event</a> that contain the <code>source</code> layer from
+which they were emitted and a payload that depends on the specific event that
+was emitted.</p>
+<p>The following is a list of the currently implemented events with a high-level
+overview of their payload as well as the layers which emit them.</p>
+<h3 id="qkvevent"><small>QKVEvent</small></h3>
+<p>The QKVEvent is emmited by the <a href="/api_docs/fast_transformers/attention/attention_layer.html">attention layer</a> and it contains the
+<code>queries</code>, <code>keys</code> and <code>values</code> in the corresponding attributes.</p>
+<h3 id="attentionevent"><small>AttentionEvent</small></h3>
+<p>The AttentionEvent is emitted by the <a href="/api_docs/fast_transformers/attention/full_attention.html">full attention</a> and it contains the
+softmax normalized attention matrix in the attribute <code>attention_matrix</code>.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../tips_and_tricks/" class="btn btn-neutral float-right" title="Tips and Tricks">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../recurrent_transformers/" class="btn btn-neutral" title="Recurrent Transformers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/idiap/fast-transformers/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../recurrent_transformers/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../tips_and_tricks/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
